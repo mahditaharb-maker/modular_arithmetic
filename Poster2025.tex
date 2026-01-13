@@ -1,0 +1,201 @@
+\documentclass[9pt]{article}
+\usepackage[paperwidth=8.5in,paperheight=11in,margin=0.35in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{setspace}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\setlength{\columnsep}{0.2in}
+\renewcommand{\baselinestretch}{0.88}
+
+\begin{document}
+
+% Header
+\centering
+{\fontsize{15}{17}\selectfont\textbf{Lebesgue and Sobolev Spaces with Variable Exponents}}
+
+\vspace{0.08cm}
+
+	{\fontsize{9}{10}\selectfont \textbf{Brahimi, Mahdi. Tahar.}\, • \, 9th M'sila Conference on Mathematical Analysis, M’sila, Algeria \today\, • \, University of M’sila}
+
+\vspace{0.08cm}
+
+\rule{\textwidth}{0.3pt}
+
+\vspace{0.15cm}
+
+\begin{multicols}{2}
+
+\setstretch{0.84}
+\fontsize{8}{9.2}\selectfont
+
+\section*{\fontsize{9}{10}\selectfont Core Definitions}
+\textbf{Variable Exponent:} $p: \Omega \to [1, \infty)$ measurable
+
+\textbf{Bounds:} $p^- = \text{ess inf } p(x)$, $p^+ = \text{ess sup } p(x)$
+
+\textbf{Modular:} $\rho_{p(\cdot)}(f) = \int_\Omega |f(x)|^{p(x)} dx$
+
+\textbf{Lebesgue Space:} 
+$L^{p(\cdot)}(\Omega) = \{ f : \exists\lambda>0, \rho_{p(\cdot)}(f/\lambda) < \infty \}$
+
+\textbf{Luxemburg Norm:}
+$\|f\|_{p(\cdot)} = \inf\{ \lambda > 0 : \rho_{p(\cdot)}(f/\lambda) \leq 1 \}$
+
+\textbf{Sobolev Space:}
+$W^{k,p(\cdot)}(\Omega) = \{ f \in L^{p(\cdot)} : D^\alpha f \in L^{p(\cdot)}, |\alpha| \leq k \}$
+
+\section*{\fontsize{9}{10}\selectfont Key Properties}
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item \textbf{Banach Spaces}: Complete under Luxemburg norm
+\item \textbf{Reflexive}: When $1 < p^- \leq p^+ < \infty$
+\item \textbf{Separable}: When $p^+ < \infty$
+\item \textbf{Hölder Inequality}: 
+For $\frac{1}{s(x)} = \frac{1}{p(x)} + \frac{1}{q(x)}$:\newline
+$$\|fg\|_{s(\cdot)} \leq 2\|f\|_{p(\cdot)}\|g\|_{q(\cdot)}$$
+\end{itemize}
+
+\section*{\fontsize{9}{10}\selectfont Essential Conditions}
+\textbf{Log-Hölder Continuity:}
+$|p(x) - p(y)| \leq \frac{C}{\log(e + 1/|x-y|)}$
+
+\textbf{Sobolev Embedding:} If $p$ log-Hölder and $1 < p^- \leq p^+ < n$:
+$W^{1,p(\cdot)} \hookrightarrow L^{p^*(\cdot)}$, $\frac{1}{p^*(x)} = \frac{1}{p(x)} - \frac{1}{n}$
+
+\vspace{-0.1cm}
+\section*{\fontsize{11}{12}\selectfont \textbf{Example 1: Elliptic Equations}}
+
+\subsection*{\fontsize{9}{10}\selectfont $p(x)$-Laplace Equation}
+\begin{align*}
+-\Delta_{p(x)} u &= f \quad \text{in } \Omega \\
+u &= 0 \quad \text{on } \partial\Omega
+\end{align*}
+where $\Delta_{p(x)} u = \text{div}(|\nabla u|^{p(x)-2} \nabla u)$
+
+\textbf{Weak Formulation:} Find $u \in W^{1,p(\cdot)}_0(\Omega)$ such that:
+\[
+\int_\Omega |\nabla u|^{p(x)-2} \nabla u \cdot \nabla v  dx = \int_\Omega f v  dx
+\]
+for all $v \in W^{1,p(\cdot)}_0(\Omega)$
+
+\textbf{Energy Functional:}
+\[
+J(u) = \int_\Omega \frac{1}{p(x)} |\nabla u|^{p(x)}  dx - \int_\Omega f u  dx
+\]
+
+\subsection*{\fontsize{9}{10}\selectfont Existence \& Regularity}
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item \textbf{Existence}: If $p$ log-Hölder, $1 < p^- \leq p^+ < \infty$, $f \in L^{p'(\cdot)}(\Omega)$
+\item \textbf{Regularity}: Additional conditions yield $u \in C^{1,\alpha}(\Omega)$
+\item \textbf{Uniqueness}: Guaranteed if $p(x) \geq 2$ or $1 < p(x) \leq 2$ $\forall x$
+\end{itemize}
+
+\subsection*{\fontsize{9}{10}\selectfont Eigenvalue Problem}
+Find $\lambda \in \mathbb{R}$, $u \in W^{1,p(\cdot)}_0(\Omega)\setminus\{0\}$:
+\[
+-\Delta_{p(x)} u = \lambda |u|^{p(x)-2} u
+\]
+First eigenvalue: $\lambda_1 = \inf\left\{ \frac{\int_\Omega |\nabla u|^{p(x)} dx}{\int_\Omega |u|^{p(x)} dx} \right\}$
+
+\subsection*{\fontsize{9}{10}\selectfont Physical Applications}
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item \textbf{Electrorheological fluids}: $p(x)$ depends on electric field
+\item \textbf{Image processing}: Adaptive regularization
+\item \textbf{Non-Newtonian fluids}: Shear-dependent viscosity
+\end{itemize}
+
+\columnbreak
+
+\vspace{-0.1cm}
+\section*{\fontsize{11}{12}\selectfont \textbf{Example 2: Parabolic Equations}}
+
+\subsection*{\fontsize{9}{10}\selectfont $p(x)$-Heat Equation}
+\begin{align*}
+u_t - \Delta_{p(x)} u &= f(x,t) \quad \text{in } \Omega \times (0,T) \\
+u &= 0 \quad \text{on } \partial\Omega \times (0,T) \\
+u(x,0) &= u_0(x) \quad \text{in } \Omega
+\end{align*}
+
+\textbf{Weak Formulation:} Find $u \in L^2(0,T; W^{1,p(\cdot)}_0(\Omega))$ with $u_t \in L^2(0,T; W^{-1,p'(\cdot)}(\Omega))$ such that:
+\[
+\langle u_t, v \rangle + \int_\Omega |\nabla u|^{p(x)-2} \nabla u \cdot \nabla v  dx = \int_\Omega f v  dx
+\]
+for all $v \in W^{1,p(\cdot)}_0(\Omega)$, a.e. $t \in (0,T)$
+
+\subsection*{\fontsize{9}{10}\selectfont Energy Estimates}
+\textbf{Basic Energy:}
+\[
+\frac{1}{2}\frac{d}{dt}\|u\|_{L^2}^2 + \int_\Omega |\nabla u|^{p(x)}  dx \leq \int_\Omega f u  dx
+\]
+
+\textbf{Higher Integrability:} Under suitable conditions:
+\[
+|\nabla u|^{p(x)} \in L^{1+\delta}(\Omega \times (0,T)) \quad \text{for some } \delta > 0
+\]
+
+\subsection*{\fontsize{9}{10}\selectfont Long-Time Behavior}
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item \textbf{Global existence} for appropriate initial data
+\item \textbf{Decay estimates} depending on $p^-$ and $p^+$
+\item \textbf{Stationary solutions} as $t \to \infty$ solve elliptic problem
+\item \textbf{Extinction in finite time} possible for $p^- < 2$
+\end{itemize}
+
+\subsection*{\fontsize{9}{10}\selectfont Physical Contexts}
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item \textbf{Thermal processes} with temperature-dependent conductivity
+\item \textbf{Filtration in porous media} with variable porosity
+\item \textbf{Biological systems} with density-dependent diffusion
+\end{itemize}
+
+\section*{\fontsize{9}{10}\selectfont Mathematical Challenges}
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item \textbf{Degenerate/Singular}: Behavior depends on $p(x)$ relative to 2
+\item \textbf{Non-uniform ellipticity}: Growth conditions vary spatially
+\item \textbf{Compactness}: Requires careful treatment in evolution problems
+\item \textbf{Regularity}: Hölder continuity and gradient estimates
+\end{itemize}
+
+\section*{\fontsize{9}{10}\selectfont Recent Developments}
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item \textbf{Calderón-Zygmund theory} for variable exponents
+\item \textbf{Free boundary problems} with non-standard growth
+\item \textbf{Numerical methods} for $p(x)$-PDEs
+\item \textbf{Fractional $p(x)$-Laplacians}
+\item \textbf{Stochastic versions} of variable exponent PDEs
+\end{itemize}
+
+\section*{\fontsize{9}{10}\selectfont References}
+\fontsize{6.5}{7.5}\selectfont
+\begin{enumerate}
+\setlength\itemsep{0pt}
+\item Diening et al. (2011) \emph{Lebesgue and Sobolev Spaces with Variable Exponents}
+\item Růžička (2000) \emph{Electrorheological Fluids}
+\item Fan (2015) \emph{An overview of $p(x)$-Laplace equations}  
+\item Antontsev \& Rodrigues (2006) \emph{On stationary thermo-rheological viscous flows}
+\item Acerbi \& Mingione (2007) \emph{Regularity results for parabolic systems}
+\item Zhikov (2007) \emph{On the density of smooth functions in Sobolev-Orlicz spaces}
+\end{enumerate}
+
+\fontsize{8}{9.2}\selectfont
+
+\vspace{0.2cm}
+
+\centering
+{\fontsize{8}{9}\selectfont \textbf{Contact: mahditahar.brahimi@univ-msila.dz}} \\
+{\fontsize{7}{8}\selectfont \textbf{Website: https://9mcma2025.mystrikingly.com}}
+
+\end{multicols}
+
+\end{document}
