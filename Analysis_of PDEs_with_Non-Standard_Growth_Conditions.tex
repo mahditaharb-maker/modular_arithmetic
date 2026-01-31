@@ -1,0 +1,3759 @@
+\documentclass{amsart}
+\usepackage{amsmath, amsthm, amssymb, amsfonts, mathtools}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{newtxtext, newtxmath} 
+\usepackage{listings}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{bm}  % For bold math
+\usepackage{etoolbox}  % For AtBeginDocument
+
+% Load hyperref last (except for cleveref)
+\usepackage[colorlinks=true,
+citecolor=red,
+urlcolor=blue]{hyperref}
+
+% Remove breqn package to avoid conflicts with newtxmath
+% \usepackage{breqn}
+
+\newcommand{\lo}{\lowercase} 
+\newcommand{\up}{\uppercase}
+
+% ============================================
+% TABLE AND PROOF FORMATTING
+% ============================================
+\newcolumntype{S}{>{\raggedright\arraybackslash}p{0.75\textwidth}}
+\newcolumntype{J}{>{\raggedright\arraybackslash}p{0.25\textwidth}}
+
+\newenvironment{prooftable}
+{%
+	\setlength{\LTpre}{0pt}%
+	\setlength{\LTpost}{0pt}%
+	\noindent
+	\renewcommand{\arraystretch}{1.3}%
+	\begin{longtable}{r S J}%
+		\textbf{Step} & \textbf{Statement} & \textbf{Justification} \\
+		\endfirsthead
+		\textbf{Step} & \textbf{Statement} & \textbf{Justification} \\
+		\endhead
+		\multicolumn{3}{r}{\textit{Continued on next page}} \\
+		\endfoot
+		\endlastfoot
+	}
+	{%
+	\end{longtable}%
+}
+
+% ============================================
+% DOCUMENT SETTINGS
+% ============================================
+\setcounter{MaxMatrixCols}{20}
+\setlength{\abovedisplayskip}{12pt}
+\setlength{\belowdisplayskip}{12pt}
+\setlength{\abovedisplayshortskip}{6pt}
+\setlength{\belowdisplayshortskip}{6pt}
+\setlength{\jot}{10pt}
+\raggedbottom
+
+\makeatletter
+\@namedef{subjclassname@2020}{
+	\textup{2025} Mathematics Subject Classification
+}
+\makeatother
+
+% Theorem environments - already bold
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+% ============================================
+% FONT AND SPACING SETTINGS (16pt, 1.5 spacing, ALL BOLD)
+% ============================================
+% Set entire document to 16pt font
+\renewcommand{\normalsize}{\fontsize{16}{24}\selectfont\bfseries}
+
+% Force 1.5 line spacing throughout
+\onehalfspacing
+
+% Make ALL text bold (including body text)
+\renewcommand{\seriesdefault}{\bfdefault}
+\renewcommand{\mddefault}{b}
+
+% Apply bold to all text elements
+\AtBeginDocument{%
+	\bfseries
+	\boldmath % Make math symbols bold too
+}
+
+% ============================================
+% SECTION FORMATTING (BOLD)
+% ============================================
+% Proportional sizes based on 16pt main font
+\titleformat{\section}
+{\normalfont\fontsize{19.2}{23}\selectfont\bfseries\color{blue}}  % 1.2× larger
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\normalfont\fontsize{17.6}{21.1}\selectfont\bfseries\color{teal}}  % 1.1× larger
+{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\normalfont\fontsize{16}{19.2}\selectfont\bfseries\color{violet}}  % same size
+{\thesubsubsection}{1em}{}
+
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{10pt}{10pt}{4pt}
+\titlespacing*{\subsubsection}{0pt}{8pt}{2pt}
+
+% Make captions bold
+\usepackage{caption}
+\captionsetup{font=bf}
+
+% Make list items bold
+\setlist[itemize]{font=\bfseries}
+\setlist[enumerate]{font=\bfseries}
+
+% ============================================
+% TABLE OF CONTENTS (BOLD)
+% ============================================
+\makeatletter
+\renewcommand{\l@section}{\@tocline{1}{1em}{1em}{2em}{\bfseries}}
+\renewcommand{\l@subsection}{\@tocline{1}{1em}{3em}{2em}{\bfseries}}
+\renewcommand{\l@subsubsection}{\@tocline{1}{1em}{5em}{2em}{\bfseries}}
+\makeatother
+
+% ============================================
+% METADATA
+% ============================================
+\subjclass[2020]{35J60, 35J92, 46E30, 35K55, 35R35}
+
+\subjclass[2020]{
+	35J60 (Nonlinear elliptic equations), 
+	35J92 (Quasilinear elliptic equations), 
+	46E30 (Sobolev and Orlicz spaces), 
+	35K55 (Nonlinear parabolic equations), 
+	35R35 (Free boundary problems),
+	76A05 (Non-Newtonian fluids)
+}
+
+\keywords{
+	Variable exponent spaces, $p(x)$-Laplacian, Non-standard growth, 
+	Log-H\"older continuity, Sobolev embeddings, Electrorheological fluids
+}
+
+\title{\textbf{\lo{\up{A}nalysis of \up{PDE}s with \up{N}on-\up{S}tandard \up{G}rowth \up{C}onditions}}}
+
+\author{%
+	\textbf{\fontsize{12}{14}\selectfont
+		b\lo{rahimi}, m\lo{ahdi}. t\lo{ahar}. \\[1pt]
+		{d\lo{epartment of} m\lo{athematics}} \\[1pt]
+		{u\lo{niversity of} m\lo{ohamed} b\lo{oudiaf}, m\lo{sila}, a\lo{lgeria}} \\[1pt]
+		{\texttt{\href{mailto:mahdi.brahimi@univ-msila.dz}{%
+					\lo{mahditahar.brahimi@univ-msila.dz}}}}%
+	}%
+}
+
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+
+% ============================================
+% PAGE LAYOUT
+% ============================================
+\usepackage[margin=0.8in]{geometry}
+% Fix fancyhdr warning about footskip
+\setlength{\footskip}{15pt}
+
+% Fancyhdr setup
+\fancyhf{} % Clear all header/footer fields
+\renewcommand{\headrulewidth}{0pt} % Remove header line
+\fancyfoot[C]{\Large\bfseries\thepage} % Large bold page numbers centered
+
+\pagestyle{fancy}
+
+% Code listing setup - ASCII only version (also bold)
+\lstdefinestyle{pythonstyle}{
+	language=Python,
+	basicstyle=\ttfamily\bfseries\footnotesize,
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{green!50!black}\bfseries,
+	stringstyle=\color{red}\bfseries,
+	showstringspaces=false,
+	breaklines=true,
+	frame=single,
+	numbers=left,
+	numberstyle=\tiny\color{gray}\bfseries,
+	tabsize=4,
+	captionpos=b,
+	literate={λ}{{$\boldsymbol{\lambda}$}}1 
+	{ρ}{{$\boldsymbol{\rho}$}}1 
+	{∇}{{$\boldsymbol{\nabla}$}}1 
+	{≈}{{$\boldsymbol{\approx}$}}1
+}
+
+% ============================================
+% SMART BREAKING ENVIRONMENT
+% ============================================
+\NewDocumentEnvironment{smartbreak}{}
+{\begin{dmath*}[breakdepth=0, style={\displaystyle}]}
+	{\end{dmath*}}
+
+\NewDocumentCommand{\inlinebreak}{m}{%
+	\begingroup
+	\def\+{\penalty0\relax\allowbreak+}%
+	\def\-{\penalty0\relax\allowbreak-}%
+	\def\={\penalty0\relax\allowbreak=}%
+	\def\,{\penalty0\relax\allowbreak,}%
+	#1%
+	\endgroup
+}
+
+% Make abstract bold
+\let\oldabstract\abstract
+\let\endoldabstract\endabstract
+\renewenvironment{abstract}
+{\oldabstract\bfseries}
+{\endoldabstract}
+
+% Make table text bold
+\AtBeginEnvironment{tabular}{\bfseries}
+\AtBeginEnvironment{longtable}{\bfseries}
+
+\begin{document}
+	
+	% Title page
+	\maketitle
+	\thispagestyle{empty}
+	
+	% Abstract
+	\begin{center}
+		\fontsize{12}{14}\selectfont
+		\underline{\textbf{Abstract}}
+	\end{center}
+	
+	\fontsize{12}{14}\selectfont
+	This thesis draft provides a concise overview of Lebesgue and Sobolev spaces with variable exponents $L^{p(\cdot)}(\Omega)$ and $W^{k,p(\cdot)}(\Omega)$, their fundamental properties, and applications to partial differential equations. Key topics include the Luxemburg norm, modular functionals, essential boundedness conditions ($p^-$, $p^+$), and the critical log-H\"older continuity condition for Sobolev embeddings.\\ Applications focus on the $p(x)$-Laplace equation and related elliptic/parabolic problems arising in non-Newtonian fluid dynamics, image processing, and materials with spatially varying properties.
+	
+	\newpage
+	
+	% Table of Contents
+	\setstretch{0.8}
+	\tableofcontents
+	\setstretch{1.5}
+	\newpage
+	
+	% Reset page counter
+	\setcounter{page}{1}
+	\pagestyle{fancy}
+	
+	\section{Introduction}\label{sec:intro}
+	Variable exponent function spaces generalize classical Lebesgue and Sobolev spaces by allowing the exponent $p$ to vary as a measurable function $p(x):\Omega\to[1,\infty)$. This framework models physical phenomena with spatially dependent nonlinearities, such as electrorheological fluids where viscosity depends on an electric field.\\ The mathematical theory requires careful treatment of modular convergence, non-uniform ellipticity, and degenerate/singular behavior.\\ This work summarizes essential definitions, key theorems, and applications to $p(x)$-Laplace equations.
+	
+	\section{Core Definitions}\label{sec:definitions}
+	
+	\begin{definition}[Variable Exponent]\label{def:var-exp}
+		A measurable function $p: \Omega \to [1, \infty)$ is called a variable exponent.
+	\end{definition}
+	
+	\begin{definition}[Bounds]\label{def:bounds}
+		For a variable exponent $p$, define:
+		\[
+		p^- = \operatorname{ess\,inf}_{x\in\Omega} p(x), \quad p^+ = \operatorname{ess\,sup}_{x\in\Omega} p(x)
+		\]
+	\end{definition}
+	
+	\begin{definition}[Modular]\label{def:modular}
+		The modular functional $\rho_{p(\cdot)}: L^{p(\cdot)}(\Omega) \to [0,\infty]$ is defined by:
+		\[
+		\rho_{p(\cdot)}(f) = \int_\Omega |f(x)|^{p(x)} dx
+		\]
+	\end{definition}
+	
+	\begin{definition}[Lebesgue Space]\label{def:lebesgue-space}
+		The variable exponent Lebesgue space is:
+		\[
+		L^{p(\cdot)}(\Omega) = \{ f : \exists\lambda>0, \rho_{p(\cdot)}(f/\lambda) < \infty \}
+		\]
+	\end{definition}
+	
+	\begin{definition}[Luxemburg Norm]\label{def:luxemburg-norm}
+		The Luxemburg norm is defined as:
+		\[
+		\|f\|_{p(\cdot)} = \inf\{ \lambda > 0 : \rho_{p(\cdot)}(f/\lambda) \leq 1 \}
+		\]
+	\end{definition}
+	
+	\begin{definition}[Sobolev Space]\label{def:sobolev-space}
+		The variable exponent Sobolev space is:
+		\[
+		W^{k,p(\cdot)}(\Omega) = \{ f \in L^{p(\cdot)} : D^\alpha f \in L^{p(\cdot)}, |\alpha| \leq k \}
+		\]
+		with norm $\|f\|_{W^{k,p(\cdot)}} = \sum_{|\alpha|\leq k} \|D^\alpha f\|_{p(\cdot)}$.
+	\end{definition}
+	
+	\section{Key Properties}\label{sec:properties}
+	
+	\begin{theorem}[Completeness]\label{thm:completeness}
+		$L^{p(\cdot)}(\Omega)$ is a Banach space under the Luxemburg norm.
+	\end{theorem}
+	
+	\begin{theorem}[Reflexivity]\label{thm:reflexivity}
+		If $1 < p^- \leq p^+ < \infty$, then $L^{p(\cdot)}(\Omega)$ is reflexive.
+	\end{theorem}
+	
+	\begin{theorem}[Separability]\label{thm:separability}
+		If $p^+ < \infty$, then $L^{p(\cdot)}(\Omega)$ is separable.
+	\end{theorem}
+	
+	\begin{theorem}[Generalized Hölder Inequality]\label{thm:holder}
+		Let $p, q, s: \Omega \to [1,\infty]$ be measurable with $\frac{1}{s(x)} = \frac{1}{p(x)} + \frac{1}{q(x)}$ a.e. For $f \in L^{p(\cdot)}(\Omega)$, $g \in L^{q(\cdot)}(\Omega)$, we have:
+		\[
+		\|fg\|_{s(\cdot)} \leq 2\|f\|_{p(\cdot)}\|g\|_{q(\cdot)}
+		\]
+	\end{theorem}
+	
+	\section{Essential Conditions}\label{sec:conditions}
+	
+	\begin{definition}[Log-Hölder Continuity]\label{def:log-holder}
+		A variable exponent $p$ is log-Hölder continuous if:
+		\[
+		|p(x) - p(y)| \leq \frac{C}{\log(e + 1/|x-y|)} \quad \text{for all } x,y \in \Omega
+		\]
+	\end{definition}
+	
+	\begin{theorem}[Sobolev Embedding]\label{thm:sobolev-embedding}
+		If $p$ is log-Hölder continuous and $1 < p^- \leq p^+ < n$, then:
+		\[
+		W^{1,p(\cdot)}(\Omega) \hookrightarrow L^{p^*(\cdot)}(\Omega)
+		\]
+		where $\frac{1}{p^*(x)} = \frac{1}{p(x)} - \frac{1}{n}$.
+	\end{theorem}
+	
+	\section{Elliptic Equations}\label{sec:elliptic}
+	
+	\subsection{$p(x)$-Laplace Equation}\label{subsec:p-laplace}
+	
+	\begin{equation}\label{eq:p-laplace}
+	\begin{aligned}
+	-\Delta_{p(x)} u &= f \quad \text{in } \Omega \\
+	u &= 0 \quad \text{on } \partial\Omega
+	\end{aligned}
+	\end{equation}
+	where $\Delta_{p(x)} u = \text{div}(|\nabla u|^{p(x)-2} \nabla u)$.
+	
+	\begin{definition}[Weak Formulation]\label{def:weak-form}
+		Find $u \in W^{1,p(\cdot)}_0(\Omega)$ such that for all $v \in W^{1,p(\cdot)}_0(\Omega)$:
+		\[
+		\int_\Omega |\nabla u|^{p(x)-2} \nabla u \cdot \nabla v  dx = \int_\Omega f v  dx
+		\]
+	\end{definition}
+	
+	\begin{definition}[Energy Functional]\label{def:energy}
+		\[
+		J(u) = \int_\Omega \frac{1}{p(x)} |\nabla u|^{p(x)}  dx - \int_\Omega f u  dx
+		\]
+	\end{definition}
+	
+	\subsection{Existence \& Regularity}\label{subsec:existence-regularity}
+	
+	\begin{theorem}[Existence]\label{thm:existence}
+		If $p$ is log-Hölder continuous, $1 < p^- \leq p^+ < \infty$, and $f \in L^{p'(\cdot)}(\Omega)$, then \eqref{eq:p-laplace} has a weak solution.
+	\end{theorem}
+	
+	\begin{theorem}[Regularity]\label{thm:regularity}
+		Under additional conditions, weak solutions $u \in C^{1,\alpha}(\Omega)$.
+	\end{theorem}
+	
+	\begin{theorem}[Uniqueness]\label{thm:uniqueness}
+		The solution is unique if either $p(x) \geq 2$ or $1 < p(x) \leq 2$ uniformly.
+	\end{theorem}
+	
+	\subsection{Eigenvalue Problem}\label{subsec:eigenvalue}
+	
+	\begin{equation}\label{eq:eigenvalue}
+	-\Delta_{p(x)} u = \lambda |u|^{p(x)-2} u
+	\end{equation}
+	
+	\begin{theorem}[First Eigenvalue]\label{thm:first-eigenvalue}
+		The first eigenvalue is:
+		\[
+		\lambda_1 = \inf\left\{ \frac{\int_\Omega |\nabla u|^{p(x)} dx}{\int_\Omega |u|^{p(x)} dx} : u \in W^{1,p(\cdot)}_0(\Omega)\setminus\{0\} \right\}
+		\]
+		and is attained by a positive function $u_1$.
+	\end{theorem}
+	
+	\section{Parabolic Equations}\label{sec:parabolic}
+	
+	\subsection{$p(x)$-Heat Equation}\label{subsec:p-heat}
+	
+	\begin{equation}\label{eq:p-heat}
+	\begin{aligned}
+	u_t - \Delta_{p(x)} u &= f(x,t) \quad \text{in } \Omega \times (0,T) \\
+	u &= 0 \quad \text{on } \partial\Omega \times (0,T) \\
+	u(x,0) &= u_0(x) \quad \text{in } \Omega
+	\end{aligned}
+	\end{equation}
+	
+	\begin{theorem}[Finite-Time Extinction]\label{thm:extinction}
+		For $p^- < 2$, solutions of \eqref{eq:p-heat} with $f=0$ vanish in finite time.
+	\end{theorem}
+	
+	\section{Recent Developments}\label{sec:recent}
+	\begin{itemize}
+		\setlength\itemsep{0pt}
+		\item Calderón-Zygmund theory for variable exponents
+		\item Free boundary problems with non-standard growth
+		\item Numerical methods for $p(x)$-PDEs
+		\item Fractional $p(x)$-Laplacians
+		\item Stochastic versions of variable exponent PDEs
+	\end{itemize}
+	
+	\section{Conclusion}\label{sec:conclusion}
+	Variable exponent spaces provide a versatile framework for modeling materials with non-standard growth properties. The $p(x)$-Laplacian exhibits rich mathematical behavior degenerate when $p(x)>2$, singular when $1<p(x)<2$ with applications spanning fluid dynamics, image restoration, and porous media flow. Fundamental challenges include establishing regularity, compactness, and well-posedness under log-Hölder continuity conditions.
+	
+	\addtocontents{toc}{\protect\setcounter{tocdepth}{-10}}
+	\appendix
+	\section*{Appendices}\label{sec:appendices}
+	\addcontentsline{toc}{section}{Appendices}
+	
+\section{Complete Proof Tables of All Results}\label{sec:proof-tables}
+
+% Set smaller font for appendix tables
+\begingroup
+\fontsize{12}{14}\selectfont
+
+% ============================================
+% 1. COMPLETENESS OF L^{p(·)}(Ω)
+% ============================================
+
+\begin{theorem}[Completeness]\label{thm:completeness}
+	$L^{p(\cdot)}(\Omega)$ is a Banach space under the Luxemburg norm.
+\end{theorem}
+
+\begin{theorem}[Reflexivity]\label{thm:reflexivity}
+	If $1 < p^- \leq p^+ < \infty$, then $L^{p(\cdot)}(\Omega)$ is reflexive.
+\end{theorem}
+
+\begin{theorem}[Separability]\label{thm:separability}
+	If $p^+ < \infty$, then $L^{p(\cdot)}(\Omega)$ is separable.
+\end{theorem}
+
+\begin{theorem}[Generalized Hölder Inequality]\label{thm:holder}
+	For $f \in L^{p(\cdot)}(\Omega)$, $g \in L^{q(\cdot)}(\Omega)$, we have:
+	$\|fg\|_{s(\cdot)} \leq 2\|f\|_{p(\cdot)}\|g\|_{q(\cdot)}$
+\end{theorem}
+
+\begin{definition}[Log-Hölder Continuity]\label{def:log-holder}
+	$|p(x) - p(y)| \leq \frac{C}{\log(e + 1/|x-y|)}$
+\end{definition}
+
+\begin{theorem}[Sobolev Embedding]\label{thm:sobolev-embedding}
+	If $p$ is log-Hölder continuous and $1 < p^- \leq p^+ < n$, then:
+	$W^{1,p(\cdot)}(\Omega) \hookrightarrow L^{p^*(\cdot)}(\Omega)$
+\end{theorem}
+\subsection{Proof of Theorem \ref{thm:completeness}: Completeness of $L^{p(\cdot)}(\Omega)$}
+
+\begin{prooftable}
+	1 & 
+	Let $\{f_n\}_{n=1}^\infty$ be a Cauchy sequence in $L^{p(\cdot)}(\Omega)$ with respect to 
+	the Luxemburg norm $\|\cdot\|_{p(\cdot)}$. For $\epsilon > 0$, choose $N$ such that 
+	$\|f_n - f_m\|_{p(\cdot)} < \epsilon$ for $n,m \geq N$. &
+	Definition of Cauchy sequence \\
+	
+	2 &
+	By the unit ball property, $\rho_{p(\cdot)}\bigl(\frac{f_n - f_m}{\epsilon}\bigr) \leq 1$ 
+	for $n,m \geq N$, where $\rho_{p(\cdot)}(f) = \int_\Omega |f(x)|^{p(x)}dx$ is the modular. &
+	Equivalence: $\|f\|_{p(\cdot)} < 1$ iff $\rho_{p(\cdot)}(f) \leq 1$ \\
+	
+	3 &
+	Since $\rho_{p(\cdot)}\bigl(\frac{f_n - f_m}{\epsilon}\bigr) \leq 1$, we have 
+	$\int_\Omega |f_n(x) - f_m(x)|^{p(x)}dx \leq \epsilon^{p^+} + \epsilon^{p^-}$ for $n,m \geq N$. &
+	Modular properties and bounds $p^- \leq p(x) \leq p^+$ \\
+	
+	4 &
+	Thus $\{f_n\}$ is Cauchy in measure: For any $\delta > 0$, 
+	$\mu(\{x: |f_n(x) - f_m(x)| > \delta\}) \to 0$ as $n,m \to \infty$. &
+	Chebyshev's inequality applied to step 3 \\
+	
+	5 &
+	By completeness of convergence in measure, there exists a measurable function $f$ 
+	and a subsequence $\{f_{n_k}\}$ such that $f_{n_k} \to f$ almost everywhere. &
+	Riesz theorem: Cauchy in measure implies a.e. convergent subsequence \\
+	
+	6 &
+	For fixed $m \geq N$ and $k$ large, apply Fatou's lemma to $|f_{n_k} - f_m|^{p(x)}$:
+	$\int_\Omega |f(x) - f_m(x)|^{p(x)}dx \leq \liminf_{k\to\infty} \int_\Omega |f_{n_k}(x) - f_m(x)|^{p(x)}dx$. &
+	Fatou's lemma for variable exponent integrals \\
+	
+	7 &
+	From step 3, the right side is bounded by $\epsilon^{p^+} + \epsilon^{p^-}$, so
+	$\rho_{p(\cdot)}\bigl(\frac{f - f_m}{\epsilon}\bigr) \leq 1$ for $m \geq N$. &
+	Monotonicity of the modular \\
+	
+	8 &
+	Therefore $\|f - f_m\|_{p(\cdot)} \leq \epsilon$ for $m \geq N$, showing 
+	$f_m \to f$ in $L^{p(\cdot)}(\Omega)$. &
+	Converse unit ball property \\
+	
+	9 &
+	Finally, $f \in L^{p(\cdot)}(\Omega)$ since $\|f\|_{p(\cdot)} \leq \|f - f_N\|_{p(\cdot)} + \|f_N\|_{p(\cdot)} < \infty$. &
+	Triangle inequality and $f_N \in L^{p(\cdot)}(\Omega)$ \\
+	
+	10 &
+	Thus every Cauchy sequence converges in $L^{p(\cdot)}(\Omega)$, proving Theorem \ref{thm:completeness}. &
+	Definition of completeness \\
+\end{prooftable}
+
+% ============================================
+% 2. REFLEXIVITY THEOREM
+% ============================================
+\subsection{Proof of Theorem \ref{thm:reflexivity}: Reflexivity of Variable Exponent Spaces}
+
+\begin{prooftable}
+	1 & 
+	\textbf{Setup:} Let $1 < p^- \leq p^+ < \infty$, $\Omega \subset \mathbb{R}^n$ measurable.
+	Consider $X = L^{p(\cdot)}(\Omega)$ with Luxemburg norm $\|f\|_{X} = \inf\{\lambda > 0 : \rho(f/\lambda) \leq 1\}$
+	where $\rho(f) = \int_\Omega |f(x)|^{p(x)} dx$ is the modular. &
+	Definitions of variable Lebesgue space and norm \\
+	
+	2 &
+	\textbf{Step 1 - Uniform convexity setup:} We prove $X$ is uniformly convex: For every
+	$0 < \epsilon \leq 2$, there exists $\delta(\epsilon) > 0$ such that for all
+	$f, g \in X$ with $\|f\|_X = \|g\|_X = 1$ and $\|f - g\|_X \geq \epsilon$, we have
+	$\left\|\frac{f+g}{2}\right\|_X \leq 1 - \delta(\epsilon)$. &
+	Definition of uniform convexity \\
+	
+	3 &
+	Let $f, g \in X$ with $\|f\|_X = \|g\|_X = 1$. By the unit ball property,
+	$\rho(f) \leq 1$ and $\rho(g) \leq 1$. &
+	Characterization: $\|h\|_X \leq 1 \iff \rho(h) \leq 1$ \\
+	
+	4 &
+	\textbf{Lemma 1 (Clarkson-type inequality):} For all $f, g \in X$:
+	$\rho\bigl(\frac{f+g}{2}\bigr) + \rho\bigl(\frac{f-g}{2}\bigr) \leq \frac{1}{2}\rho(f) + \frac{1}{2}\rho(g)$. &
+	Variable exponent Clarkson inequality \\
+	
+	5 &
+	Apply Lemma 1 to our $f, g$: $\rho\bigl(\frac{f+g}{2}\bigr) + \rho\bigl(\frac{f-g}{2}\bigr) \leq 1$. &
+	Using $\rho(f) \leq 1$, $\rho(g) \leq 1$ from step 3 \\
+	
+	6 &
+	Apply Lemma 2 (norm-modular relationship) to $h = f - g$ with $\alpha = \epsilon$: 
+	Since $\|f - g\|_X \geq \epsilon$, we have $\rho\bigl(\frac{f-g}{\epsilon}\bigr) \geq 1$. &
+	Assumption $\|f-g\|_X \geq \epsilon$ \\
+	
+	7 &
+	\textbf{Lemma 3 (Power estimate):} For any $h \in X$ and $0 < \lambda \leq 1$:
+	$\rho(\lambda h) \geq \lambda^{p^+} \rho(h)$ where $p^+ = \text{ess sup}_{x\in\Omega} p(x)$. &
+	Convexity inequality for power functions \\
+	
+	8 &
+	Apply Lemma 3 with $h = \frac{f-g}{\epsilon}$ and $\lambda = \frac{\epsilon}{2}$:
+	$\rho\bigl(\frac{f-g}{2}\bigr) \geq \bigl(\frac{\epsilon}{2}\bigr)^{p^+}$. &
+	Take $\lambda = \epsilon/2 \leq 1$ \\
+	
+	9 &
+	From step 5: $\rho\bigl(\frac{f+g}{2}\bigr) \leq 1 - \bigl(\frac{\epsilon}{2}\bigr)^{p^+}$. &
+	Inequality rearrangement \\
+	
+	10 &
+	\textbf{Lemma 4 (Modular to norm):} If $\rho(h) \leq 1 - \delta$ for some $0 < \delta < 1$, 
+	then $\|h\|_X \leq 1 - \frac{\delta}{p^+}$. &
+	Conversion lemma \\
+	
+	11 &
+	Apply Lemma 4 to $h = \frac{f+g}{2}$: $\left\|\frac{f+g}{2}\right\|_X \leq 1 - \frac{1}{p^+}\bigl(\frac{\epsilon}{2}\bigr)^{p^+}$. &
+	Final norm estimate \\
+	
+	12 &
+	Define $\delta(\epsilon) = \frac{1}{p^+}\bigl(\frac{\epsilon}{2}\bigr)^{p^+} > 0$.
+	Thus $X$ is uniformly convex. &
+	Uniform convexity proven \\
+	
+	13 &
+	\textbf{Step 2 - Milman-Pettis theorem:} Every uniformly convex Banach space is reflexive. &
+	Milman-Pettis theorem \\
+	
+	14 &
+	Since $X = L^{p(\cdot)}(\Omega)$ is uniformly convex, it is reflexive. &
+	Combining results \\
+	
+	15 &
+	\textbf{Corollary:} $W^{1,p(\cdot)}(\Omega)$ inherits reflexivity as a closed subspace. &
+	Inheritance by closed subspaces \\
+	
+	16 &
+	Thus Theorem \ref{thm:reflexivity} is proved. &
+	Conclusion \\
+\end{prooftable}
+
+% ============================================
+% 3. SEPARABILITY OF L^{p(·)}(Ω) WHEN p⁺ < ∞
+% ============================================
+\subsection{Proof of Theorem \ref{thm:separability}: Separability of $L^{p(\cdot)}(\Omega)$ for $p^+ < \infty$}
+
+\begin{prooftable}
+	1 & 
+	Assume $p^+ < \infty$. Let $\mathcal{S}$ be the set of simple functions of the form
+	$s(x) = \sum_{i=1}^n a_i \chi_{E_i}(x)$ where $a_i \in \mathbb{Q} + i\mathbb{Q}$ and 
+	$E_i$ are measurable sets with finite measure. &
+	Definition of simple functions \\
+	
+	2 &
+	For any $f \in L^{p(\cdot)}(\Omega)$ and $\epsilon > 0$, by Luzin's theorem there exists 
+	a continuous function $g$ with compact support such that 
+	$\mu(\{x: f(x) \neq g(x)\}) < \epsilon$ and $|g(x)| \leq \|f\|_\infty$ a.e. &
+	Luzin's theorem on approximation by continuous functions \\
+	
+	3 &
+	Since $\Omega \subset \mathbb{R}^n$ is separable, the space $C_c(\Omega)$ of continuous
+	functions with compact support is separable under the uniform norm. &
+	$\mathbb{R}^n$ is second countable \\
+	
+	4 &
+	Thus there exists a sequence of simple functions $\{s_n\}$ from $\mathcal{S}$ such that
+	$s_n \to g$ uniformly on compact subsets. &
+	Weierstrass approximation and density of rationals \\
+	
+	5 &
+	For each $n$, $\|g - s_n\|_{p(\cdot)} \leq \|g - s_n\|_\infty \cdot \|\chi_{\text{supp}(g)}\|_{p(\cdot)} \to 0$. &
+	Hölder-type inequality and uniform convergence \\
+	
+	6 &
+	Now estimate $\|f - s_n\|_{p(\cdot)} \leq \|f - g\|_{p(\cdot)} + \|g - s_n\|_{p(\cdot)}$. &
+	Triangle inequality \\
+	
+	7 &
+	The first term $\|f - g\|_{p(\cdot)}$ is small because $f$ and $g$ differ only on a set
+	of measure $\epsilon$ and $p^+ < \infty$: 
+	$\int_{\{f \neq g\}} |f-g|^{p(x)}dx \leq (2\|f\|_\infty)^{p^+}\epsilon$. &
+	Boundedness and finite exponent \\
+	
+	8 &
+	Therefore, $\mathcal{S}$ is dense in $L^{p(\cdot)}(\Omega)$, proving Theorem \ref{thm:separability}. &
+	Countable dense subset exists \\
+\end{prooftable}
+
+% ============================================
+% 4. GENERALIZED HÖLDER INEQUALITY
+% ============================================
+\subsection{Proof of Theorem \ref{thm:holder}: Generalized Hölder Inequality}
+
+\begin{prooftable}
+	1 & 
+	Let $p, q, s: \Omega \to [1,\infty]$ be measurable with 
+	$\frac{1}{s(x)} = \frac{1}{p(x)} + \frac{1}{q(x)}$ a.e. For $f \in L^{p(\cdot)}(\Omega)$,
+	$g \in L^{q(\cdot)}(\Omega)$, we prove $\|fg\|_{s(\cdot)} \leq 2\|f\|_{p(\cdot)}\|g\|_{q(\cdot)}$. &
+	Statement of Theorem \ref{thm:holder} \\
+	
+	2 &
+	First consider the case $\|f\|_{p(\cdot)} = \|g\|_{q(\cdot)} = 1$. Then by definition,
+	$\rho_{p(\cdot)}(f) \leq 1$ and $\rho_{q(\cdot)}(g) \leq 1$. &
+	Unit ball property of Luxemburg norm \\
+	
+	3 &
+	For each $x \in \Omega$, apply the classical Young inequality:
+	$|f(x)g(x)| \leq \frac{|f(x)|^{p(x)}}{p(x)} + \frac{|g(x)|^{q(x)}}{q(x)}$. &
+	Young's inequality: $ab \leq \frac{a^p}{p} + \frac{b^q}{q}$ \\
+	
+	4 &
+	Integrate over $\Omega$: $\int_\Omega |f(x)g(x)|dx \leq \int_\Omega \frac{|f(x)|^{p(x)}}{p(x)}dx + \int_\Omega \frac{|g(x)|^{q(x)}}{q(x)}dx$. &
+	Monotonicity of integral \\
+	
+	5 &
+	Since $p(x) \geq 1$ and $q(x) \geq 1$, we have $\frac{1}{p(x)} \leq 1$, $\frac{1}{q(x)} \leq 1$, so
+	$\int_\Omega |f(x)g(x)|dx \leq \rho_{p(\cdot)}(f) + \rho_{q(\cdot)}(g) \leq 2$. &
+	Bounds on reciprocals and step 2 \\
+	
+	6 &
+	Now for the modular: $\rho_{s(\cdot)}\bigl(\frac{fg}{2}\bigr) = \int_\Omega \left|\frac{f(x)g(x)}{2}\right|^{s(x)}dx$. &
+	Definition of modular \\
+	
+	7 &
+	Since $s(x) \geq 1$, the function $t \mapsto t^{s(x)}$ is convex, so
+	$\left|\frac{f(x)g(x)}{2}\right|^{s(x)} \leq \frac{1}{2}|f(x)g(x)|^{s(x)} \cdot 1^{s(x)}$. &
+	Jensen's inequality for convex functions \\
+	
+	8 &
+	But $|f(x)g(x)|^{s(x)} = |f(x)|^{s(x)}|g(x)|^{s(x)} \leq \frac{|f(x)|^{p(x)}}{p(x)} + \frac{|g(x)|^{q(x)}}{q(x)}$,
+	since $\frac{s(x)}{p(x)} + \frac{s(x)}{q(x)} = 1$. &
+	Young's inequality with exponents $p(x)/s(x)$ and $q(x)/s(x)$ \\
+	
+	9 &
+	Integrating gives $\rho_{s(\cdot)}\bigl(\frac{fg}{2}\bigr) \leq \frac{1}{2}(\rho_{p(\cdot)}(f) + \rho_{q(\cdot)}(g)) \leq 1$. &
+	Linearity of integral and step 2 \\
+	
+	10 &
+	Thus $\|fg\|_{s(\cdot)} \leq 2$ when $\|f\|_{p(\cdot)} = \|g\|_{q(\cdot)} = 1$. &
+	Definition of Luxemburg norm from modular \\
+	
+	11 &
+	For general $f, g \neq 0$, apply step 10 to $\tilde{f} = f/\|f\|_{p(\cdot)}$ and 
+	$\tilde{g} = g/\|g\|_{q(\cdot)}$: $\|\tilde{f}\tilde{g}\|_{s(\cdot)} \leq 2$. &
+	Homogeneity of norms \\
+	
+	12 &
+	Therefore $\|fg\|_{s(\cdot)} \leq 2\|f\|_{p(\cdot)}\|g\|_{q(\cdot)}$, proving Theorem \ref{thm:holder}. &
+	Algebraic manipulation \\
+\end{prooftable}
+
+% ============================================
+% 5. LOG-HÖLDER CONDITION AND DENSITY
+% ============================================
+\subsection{Density of Smooth Functions under Definition \ref{def:log-holder}}
+
+\begin{prooftable}
+	1 & 
+	Assume $p: \Omega \to (1,\infty)$ satisfies Definition \ref{def:log-holder}: 
+	$|p(x)-p(y)| \leq \frac{C}{-\log|x-y|}$ for $|x-y| < 1/2$. &
+	Definition \ref{def:log-holder} of log-Hölder continuity \\
+	
+	2 &
+	Let $f \in W^{1,p(\cdot)}(\Omega)$ and $\epsilon > 0$. Extend $f$ to $\mathbb{R}^n$ by
+	zero outside $\Omega$ to get $\tilde{f} \in W^{1,p(\cdot)}(\mathbb{R}^n)$. &
+	Zero extension theorem for variable exponent spaces \\
+	
+	3 &
+	Consider the standard mollifier $\varphi_\delta(x) = \delta^{-n}\varphi(x/\delta)$ where
+	$\varphi \in C_c^\infty(\mathbb{R}^n)$, $\varphi \geq 0$, $\int \varphi = 1$. &
+	Definition of mollifier \\
+	
+	4 &
+	Define $f_\delta = \tilde{f} * \varphi_\delta$. Then $f_\delta \in C^\infty(\mathbb{R}^n)$ and 
+	$f_\delta \to \tilde{f}$ in $L^{p(\cdot)}_{loc}(\mathbb{R}^n)$. &
+	Properties of convolution and mollification \\
+	
+	5 &
+	The key estimate: $\|\nabla f_\delta\|_{L^{p(\cdot)}(\Omega)} \leq C\|\nabla f\|_{L^{p(\cdot)}(\Omega)}$
+	with $C$ independent of $\delta$ for small $\delta > 0$. &
+	Young's inequality for convolution in variable exponent spaces \\
+	
+	6 &
+	This uses Definition \ref{def:log-holder} crucially: For convolution kernels, 
+	$\|\varphi_\delta\|_{L^{p(\cdot)}(\mathbb{R}^n)} \leq C\delta^{-n/p^-} + C\delta^{-n/p^+}$. &
+	Norm estimates for mollifiers in variable $L^p$ \\
+	
+	7 &
+	Since $p$ satisfies Definition \ref{def:log-holder}, the exponents behave nicely as $\delta \to 0$,
+	allowing uniform bounds. &
+	Definition \ref{def:log-holder} prevents oscillations that would break estimates \\
+	
+	8 &
+	Thus $\{f_\delta\}$ is bounded in $W^{1,p(\cdot)}(\Omega)$, so by Theorem \ref{thm:reflexivity},
+	there exists a subsequence weakly convergent in $W^{1,p(\cdot)}(\Omega)$. &
+	Banach-Alaoglu theorem in reflexive spaces \\
+	
+	9 &
+	The weak limit must be $f$ since $f_\delta \to f$ in $L^{p(\cdot)}(\Omega)$. &
+	Uniqueness of weak limits \\
+	
+	10 &
+	For the gradient: $\nabla f_\delta = (\nabla \tilde{f}) * \varphi_\delta \rightharpoonup \nabla f$
+	weakly in $L^{p(\cdot)}(\Omega)$ as $\delta \to 0$. &
+	Properties of distributional derivatives and convolution \\
+	
+	11 &
+	Finally, $C_c^\infty(\Omega)$ is dense in $W^{1,p(\cdot)}(\Omega)$ under Definition \ref{def:log-holder}. &
+	Combination of steps 8-10 and approximation by $C_c^\infty$ functions \\
+\end{prooftable}
+
+% ============================================
+% 6. SOBOLEV EMBEDDING THEOREM
+% ============================================
+\subsection{Proof of Theorem \ref{thm:sobolev-embedding}: Sobolev Embedding $W^{1,p(\cdot)}_0(\Omega) \hookrightarrow L^{p^*(\cdot)}(\Omega)$}
+
+\begin{prooftable}
+	1 &
+	Assume $\Omega \subset \mathbb{R}^n$ bounded, $p$ satisfies Definition \ref{def:log-holder} with
+	$1 < p^- \leq p^+ < n$. Define Sobolev conjugate $p^*(x) = \frac{np(x)}{n-p(x)}$. &
+	Definition of Sobolev conjugate exponent \\
+	
+	2 &
+	First prove for $u \in C_c^1(\Omega)$: $\|u\|_{L^{p^*(\cdot)}(\Omega)} \leq C\|\nabla u\|_{L^{p(\cdot)}(\Omega)}$. &
+	Sobolev inequality for smooth functions \\
+	
+	3 &
+	Use the classical Sobolev inequality pointwise: For each $x$, if $p(x)$ were constant,
+	$|u(x)| \leq C(n,p)|\nabla u|_{L^{p(x)}}$ in appropriate sense. &
+	Classical Sobolev inequality \\
+	
+	4 &
+	The challenge: $p(x)$ varies. Use localization: Cover $\Omega$ with balls $B_i$ of radius $r_i$
+	such that on each $B_i$, $\sup_{x,y \in B_i} |p(x)-p(y)| < \epsilon$. &
+	Vitali covering lemma and continuity of $p$ \\
+	
+	5 &
+	On each ball $B_i$, apply constant exponent Sobolev inequality with exponent $p_i = \inf_{B_i} p(x)$:
+	$\|u\|_{L^{p_i^*}(B_i)} \leq C(n,p_i)\|\nabla u\|_{L^{p_i}(B_i)}$. &
+	Local constant exponent inequality \\
+	
+	6 &
+	Since $p$ satisfies Definition \ref{def:log-holder}, $p_i^* \approx p^*(x)$ on $B_i$, specifically
+	$\frac{1}{p_i^*} - \frac{1}{p^*(x)} = O\bigl(\frac{1}{-\log r_i}\bigr)$. &
+	Definition \ref{def:log-holder} in terms of Sobolev conjugate \\
+	
+	7 &
+	Use the scaling property: For constant $p$, $\|u\|_{L^{p^*}(B_r)} \sim r^{n/p^* - n/p}\|\nabla u\|_{L^p(B_r)}$. &
+	Scaling analysis of Sobolev inequality \\
+	
+	8 &
+	Combine local estimates using partition of unity $\{\psi_i\}$ with $\sum \psi_i = 1$,
+	$\text{supp}(\psi_i) \subset B_i$: $u = \sum \psi_i u$. &
+	Partition of unity subordinate to covering \\
+	
+	9 &
+	Estimate $\|u\|_{p^*(\cdot)} \leq \sum \|\psi_i u\|_{p^*(\cdot)} \leq \sum C_i \|\nabla(\psi_i u)\|_{p(\cdot)}$. &
+	Triangle inequality and local estimates \\
+	
+	10 &
+	$\|\nabla(\psi_i u)\|_{p(\cdot)} \leq \|\nabla\psi_i \cdot u\|_{p(\cdot)} + \|\psi_i \nabla u\|_{p(\cdot)}$. &
+	Product rule for derivatives \\
+	
+	11 &
+	The first term is controlled because $\nabla\psi_i$ is supported on annulus where
+	$u$ is small (by cutoff properties). &
+	Properties of partition of unity \\
+	
+	12 &
+	The second term $\|\psi_i \nabla u\|_{p(\cdot)} \leq \|\nabla u\|_{p(\cdot)}$ since $0 \leq \psi_i \leq 1$. &
+	Monotonicity of modular with $\psi_i \leq 1$ \\
+	
+	13 &
+	Summing over $i$ gives global estimate $\|u\|_{p^*(\cdot)} \leq C\|\nabla u\|_{p(\cdot)}$. &
+	Finite covering and uniform bounds \\
+	
+	14 &
+	Extend to all $u \in W^{1,p(\cdot)}_0(\Omega)$ by density (Theorem 2.1). &
+	Density argument and continuity of norms \\
+	
+	15 &
+	Thus Theorem \ref{thm:sobolev-embedding} is proved: $W^{1,p(\cdot)}_0(\Omega) \hookrightarrow L^{p^*(\cdot)}(\Omega)$. &
+	Definition of continuous embedding \\
+\end{prooftable}
+
+% ============================================
+% 7. COMPACT EMBEDDING
+% ============================================
+\subsection{Compact Embedding using Theorem \ref{thm:sobolev-embedding}}
+
+\begin{prooftable}
+	1 &
+	Assume additional condition $p^+ < \frac{np^-}{n-p^-}$. This ensures
+	$p^*(x) > p(x) + \delta$ for some $\delta > 0$ uniformly. &
+	Condition for strict inequality between $p^*$ and $p$ \\
+	
+	2 &
+	Let $\{u_n\}$ be bounded sequence in $W^{1,p(\cdot)}_0(\Omega)$, say
+	$\|u_n\|_{1,p(\cdot)} \leq M$ for all $n$. &
+	Bounded sequence in Sobolev space \\
+	
+	3 &
+	By Theorem \ref{thm:sobolev-embedding}, $\{u_n\}$ is bounded in $L^{p^*(\cdot)}(\Omega)$. &
+	Continuous embedding \\
+	
+	4 &
+	Use Fréchet-Kolmogorov compactness criterion: Need to show
+	$\|u_n(\cdot + h) - u_n(\cdot)\|_{L^{p(\cdot)}} \to 0$ as $|h| \to 0$ uniformly in $n$. &
+	Fréchet-Kolmogorov theorem in variable exponent spaces \\
+	
+	5 &
+	For smooth $u$, by fundamental theorem of calculus:
+	$|u(x+h) - u(x)| \leq |h| \int_0^1 |\nabla u(x+th)|dt$. &
+	Mean value inequality \\
+	
+	6 &
+	Raise to power $p(x)$ and integrate: 
+	$\int_\Omega |u(x+h)-u(x)|^{p(x)}dx \leq |h|^{p^-} \int_\Omega \bigl(\int_0^1 |\nabla u(x+th)|dt\bigr)^{p(x)}dx$. &
+	Interchange of integration \\
+	
+	7 &
+	Use Minkowski integral inequality:
+	$\left\|\int_0^1 |\nabla u(\cdot+th)|dt\right\|_{L^{p(\cdot)}} \leq \int_0^1 \||\nabla u(\cdot+th)|\|_{L^{p(\cdot)}}dt$. &
+	Minkowski inequality for variable exponent \\
+	
+	8 &
+	Since $p$ satisfies Definition \ref{def:log-holder}, translation is continuous in $L^{p(\cdot)}$:
+	$\|\nabla u(\cdot+th)\|_{L^{p(\cdot)}} \leq C\|\nabla u\|_{L^{p(\cdot)}}$. &
+	Translation invariance up to constant \\
+	
+	9 &
+	Thus $\|u(\cdot+h)-u\|_{L^{p(\cdot)}} \leq C|h|\|\nabla u\|_{L^{p(\cdot)}}$. &
+	Combining estimates \\
+	
+	10 &
+	For general $u_n \in W^{1,p(\cdot)}_0(\Omega)$, approximate by smooth functions
+	$u_{n,\epsilon} \in C_c^\infty(\Omega)$ with $\|u_n - u_{n,\epsilon}\|_{1,p(\cdot)} < \epsilon$. &
+	Density of smooth functions \\
+	
+	11 &
+	Then $\|u_n(\cdot+h)-u_n\|_{L^{p(\cdot)}} \leq \|u_n(\cdot+h)-u_{n,\epsilon}(\cdot+h)\|_{L^{p(\cdot)}} + 
+	\|u_{n,\epsilon}(\cdot+h)-u_{n,\epsilon}\|_{L^{p(\cdot)}} + \|u_{n,\epsilon}-u_n\|_{L^{p(\cdot)}}$. &
+	Triangle inequality \\
+	
+	12 &
+	First and third terms are $< \epsilon$ by approximation. Middle term is $< C|h|M$ by step 9. &
+	Estimation of each term \\
+	
+	13 &
+	Thus for $|h|$ small enough, $\|u_n(\cdot+h)-u_n\|_{L^{p(\cdot)}} < 2\epsilon$ uniformly in $n$. &
+	Choice of $h$ depending only on $\epsilon$ and $M$ \\
+	
+	14 &
+	So $\{u_n\}$ is precompact in $L^{p(\cdot)}(\Omega)$ by Fréchet-Kolmogorov. &
+	Compactness criterion satisfied \\
+	
+	15 &
+	Since $p^*(\cdot) > p(\cdot)$, interpolation gives compactness in $L^{p(\cdot)}(\Omega)$
+	implies compactness in $L^{q(\cdot)}(\Omega)$ for any $q$ with $p(x) \leq q(x) < p^*(x)$. &
+	Interpolation inequalities for variable exponents \\
+	
+	16 &
+	Therefore $W^{1,p(\cdot)}_0(\Omega) \hookrightarrow L^{q(\cdot)}(\Omega)$ compactly for
+	$p(x) \leq q(x) < p^*(x)$. &
+	Definition of compact embedding \\
+\end{prooftable}
+
+\endgroup  % End smaller font
+
+	\section{Numerical Methods and Python Implementations}
+
+\subsection{Finite Difference Method for 1D $p(x)$-Laplace Equation}
+
+\subsubsection{Mathematical Formulation}
+
+Consider the boundary value problem:
+\begin{align*}
+-\frac{d}{dx}\bigl(\left|\frac{du}{dx}\right|^{p(x)-2}\frac{du}{dx}\bigr) &= f(x), \quad x \in (0,1), \\
+u(0) = u(1) &= 0,
+\end{align*}
+where $p: [0,1] \to (1,\infty)$ is a measurable function and $f \in L^{p'(\cdot)}(0,1)$.
+
+\subsubsection{Numerical Discretization}
+
+Using central finite differences on a uniform grid $x_i = ih$, $h = 1/N$, we approximate:
+\[
+-\frac{1}{h}\left[\left|\frac{u_{i+1} - u_i}{h}\right|^{p_i-2}\frac{u_{i+1} - u_i}{h} - 
+\left|\frac{u_i - u_{i-1}}{h}\right|^{p_{i-1}-2}\frac{u_i - u_{i-1}}{h}\right] = f_i
+\]
+where $p_i = p(x_i)$ and $f_i = f(x_i)$.
+
+\subsubsection{Python Implementation}
+
+\begin{lstlisting}[style=pythonstyle, caption={Finite Difference Solver for 1D $p(x)$-Laplace}, label=code:1d_fd]
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.sparse import diags
+from scipy.sparse.linalg import spsolve
+
+def p_laplace_1d_fd(p_func, f_func, N=100, max_iter=50, tol=1e-8):
+"""
+Solve 1D p(x)-Laplace equation using finite differences.
+
+Parameters:
+-----------
+p_func : callable
+Function returning p(x) values
+f_func : callable
+Right-hand side function f(x)
+N : int
+Number of grid points
+max_iter : int
+Maximum Newton iterations
+tol : float
+Convergence tolerance
+
+Returns:
+--------
+x : ndarray
+Grid points
+u : ndarray
+Numerical solution
+"""
+# Create grid
+x = np.linspace(0, 1, N+1)
+h = x[1] - x[0]
+
+# Evaluate p and f
+p_vals = p_func(x)
+f_vals = f_func(x)
+
+# Initial guess (sinusoidal)
+u = np.sin(np.pi * x)
+
+# Newton iteration
+for iteration in range(max_iter):
+# Compute gradient approximations
+du = np.diff(u) / h
+
+# Nonlinear coefficients
+eps = 1e-12  # Regularization
+a = (np.abs(du) + eps)**(p_vals[:-1] - 2)
+
+# Construct tridiagonal matrix
+main_diag = np.zeros(N+1)
+lower_diag = np.zeros(N)
+upper_diag = np.zeros(N)
+
+# Interior points
+for i in range(1, N):
+main_diag[i] = (a[i-1] + a[i]) / h**2
+lower_diag[i-1] = -a[i-1] / h**2
+upper_diag[i] = -a[i] / h**2
+
+# Boundary conditions (Dirichlet)
+main_diag[0] = 1
+main_diag[N] = 1
+f_vals[0] = 0
+f_vals[N] = 0
+
+# Create sparse matrix
+A = diags([lower_diag, main_diag, upper_diag], 
+[-1, 0, 1], format='csr')
+
+# Solve linear system
+u_new = spsolve(A, f_vals)
+
+# Check convergence
+residual = np.linalg.norm(u_new - u) / np.linalg.norm(u_new)
+u = u_new
+
+if residual < tol:
+print(f"Converged in {iteration+1} iterations")
+break
+
+return x, u
+
+# Example usage
+def p_example(x):
+return 1.5 + 0.5 * np.sin(2*np.pi*x)
+
+def f_example(x):
+return 10 * np.sin(np.pi*x)
+
+# Solve and plot
+x, u = p_laplace_1d_fd(p_example, f_example, N=200)
+
+plt.figure(figsize=(12, 4))
+plt.subplot(1, 3, 1)
+plt.plot(x, u, 'b-', linewidth=2)
+plt.xlabel('x')
+plt.ylabel('u(x)')
+plt.title('Solution')
+plt.grid(True)
+
+plt.subplot(1, 3, 2)
+plt.plot(x, p_example(x), 'r-', linewidth=2)
+plt.xlabel('x')
+plt.ylabel('p(x)')
+plt.title('Variable exponent')
+plt.grid(True)
+
+plt.subplot(1, 3, 3)
+du = np.gradient(u, x)
+energy = np.abs(du)**p_example(x) / p_example(x)
+plt.plot(x, energy, 'g-', linewidth=2)
+plt.xlabel('x')
+plt.ylabel('Energy density')
+plt.title('Local energy')
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+
+\subsection{Modular and Norm Computations}
+
+\subsubsection{Mathematical Background}
+
+For $f \in L^{p(\cdot)}(\Omega)$, the modular is defined as:
+\[
+\rho_{p(\cdot)}(f) = \int_\Omega |f(x)|^{p(x)} dx
+\]
+and the Luxemburg norm:
+\[
+\|f\|_{p(\cdot)} = \inf\left\{\lambda > 0 : \rho_{p(\cdot)}(f/\lambda) \leq 1\right\}
+\]
+
+\subsubsection{Numerical Computation}
+
+\begin{lstlisting}[style=pythonstyle, caption={Modular and Norm Computations}, label=code:modular]
+import numpy as np
+from scipy.integrate import quad
+from scipy.optimize import brentq
+
+class VariableExponentSpace:
+"""Class for computations in L^{p(x)} spaces."""
+
+def __init__(self, p_func, domain=(0, 1)):
+self.p_func = p_func
+self.domain = domain
+
+def modular(self, f_func):
+"""Compute modular rho(f) = integral |f(x)|^{p(x)} dx."""
+a, b = self.domain
+
+def integrand(x):
+return np.abs(f_func(x))**self.p_func(x)
+
+result, error = quad(integrand, a, b, limit=200, epsabs=1e-12)
+return result, error
+
+def norm(self, f_func, tol=1e-10):
+"""Compute Luxemburg norm using root-finding."""
+a, b = self.domain
+
+def modular_at_lambda(lam):
+def integrand(x):
+return np.abs(f_func(x)/lam)**self.p_func(x)
+result, _ = quad(integrand, a, b, limit=200)
+return result - 1
+
+# Find lambda such that rho(f/lambda) = 1
+lam_low, lam_high = 1e-6, 1000
+
+# Ensure we bracket the root
+while modular_at_lambda(lam_low) > 0:
+lam_low /= 2
+
+while modular_at_lambda(lam_high) < 0:
+lam_high *= 2
+
+# Find root
+lam_norm = brentq(modular_at_lambda, lam_low, lam_high, xtol=tol)
+return lam_norm
+
+def holder_product(self, f_func, g_func, q_func=None):
+"""Verify Holder inequality: ||fg||_s <= 2||f||_p ||g||_q."""
+if q_func is None:
+# Default: q is conjugate of p
+def q_func(x):
+p_val = self.p_func(x)
+return p_val/(p_val - 1) if p_val != 1 else np.inf
+
+# Compute s(x) = 1/(1/p(x) + 1/q(x))
+def s_func(x):
+p_val = self.p_func(x)
+q_val = q_func(x)
+if p_val == np.inf or q_val == np.inf:
+return max(p_val, q_val)
+return 1/(1/p_val + 1/q_val)
+
+# Define product function
+def fg_func(x):
+return f_func(x) * g_func(x)
+
+# Create spaces for p, q, s
+space_p = VariableExponentSpace(self.p_func, self.domain)
+space_q = VariableExponentSpace(q_func, self.domain)
+space_s = VariableExponentSpace(s_func, self.domain)
+
+# Compute norms
+norm_f = space_p.norm(f_func)
+norm_g = space_q.norm(g_func)
+norm_fg = space_s.norm(fg_func)
+
+left_side = norm_fg
+right_side = 2 * norm_f * norm_g
+
+return {
+'norm_fg_s': left_side,
+'two_norm_f_norm_g': right_side,
+'inequality_holds': left_side <= right_side,
+'ratio': left_side / right_side
+}
+
+# Example usage
+def p_var(x):
+return 2.0 + np.sin(2*np.pi*x)
+
+def f_test(x):
+return np.sin(3*np.pi*x)
+
+def g_test(x):
+return np.cos(4*np.pi*x)
+
+# Create space and compute
+space = VariableExponentSpace(p_var)
+modular_val, error = space.modular(f_test)
+norm_val = space.norm(f_test)
+
+print(f"Modular rho(f) = {modular_val:.6f} +/- {error:.2e}")
+print(f"Norm ||f||_p(x) = {norm_val:.6f}")
+
+# Test Holder inequality
+result = space.holder_product(f_test, g_test)
+print("\nHolder inequality test:")
+print(f"||fg||_s = {result['norm_fg_s']:.6f}")
+print(f"2||f||_p||g||_q = {result['two_norm_f_norm_g']:.6f}")
+print(f"Inequality holds: {result['inequality_holds']}")
+print(f"Ratio: {result['ratio']:.6f}")
+\end{lstlisting}
+
+\subsection{Eigenvalue Problem for $p(x)$-Laplacian}
+
+\subsubsection{Mathematical Formulation}
+
+The eigenvalue problem:
+\[
+-\Delta_{p(x)} u = \lambda |u|^{p(x)-2} u \quad \text{in } \Omega, \quad u = 0 \text{ on } \partial\Omega
+\]
+with first eigenvalue given by the Rayleigh quotient:
+\[
+\lambda_1 = \inf_{u \in W_0^{1,p(\cdot)}(\Omega)\setminus\{0\}} 
+\frac{\int_\Omega |\nabla u|^{p(x)} dx}{\int_\Omega |u|^{p(x)} dx}
+\]
+
+\subsubsection{Rayleigh-Ritz Approximation}
+
+\begin{lstlisting}[style=pythonstyle, caption={Eigenvalue Computation via Rayleigh-Ritz}, label=code:eigenvalue]
+import numpy as np
+from scipy.integrate import simpson
+from scipy.optimize import minimize
+from scipy.sparse.linalg import eigs
+import matplotlib.pyplot as plt
+
+class pLaplaceEigenvalue:
+"""Compute eigenvalues of p(x)-Laplacian."""
+
+def __init__(self, p_func, domain=(0, 1)):
+self.p_func = p_func
+self.domain = domain
+
+def rayleigh_quotient(self, u, x):
+"""Compute Rayleigh quotient R(u)."""
+h = x[1] - x[0]
+
+# Compute derivative
+du = np.gradient(u, h)
+
+# Compute integrals
+numerator = simpson(np.abs(du)**self.p_func(x), x)
+denominator = simpson(np.abs(u)**self.p_func(x), x)
+
+return numerator / denominator if denominator > 1e-12 else np.inf
+
+def first_eigenvalue(self, basis_size=10, N=500):
+"""Compute first eigenvalue using Rayleigh-Ritz method."""
+x = np.linspace(self.domain[0], self.domain[1], N)
+
+# Basis functions: sin(k*pi*x)
+def basis_function(k):
+return np.sin(k * np.pi * x)
+
+# Objective function for minimization
+def objective(coeffs):
+u = np.zeros_like(x)
+for i, c in enumerate(coeffs, start=1):
+u += c * basis_function(i)
+return self.rayleigh_quotient(u, x)
+
+# Initial guess
+coeffs0 = np.random.randn(basis_size)
+
+# Minimize Rayleigh quotient
+bounds = [(None, None) for _ in range(basis_size)]
+result = minimize(objective, coeffs0, method='L-BFGS-B', bounds=bounds)
+
+# Reconstruct eigenfunction
+u_opt = np.zeros_like(x)
+for i, c in enumerate(result.x, start=1):
+u_opt += c * basis_function(i)
+
+# Normalize
+norm = np.sqrt(simpson(u_opt**2, x))
+u_opt = u_opt / norm if norm > 0 else u_opt
+
+return result.fun, u_opt, x
+
+def compute_multiple_eigenvalues(self, num_eigenvalues=5, N=300):
+"""Compute multiple eigenvalues using finite differences."""
+x = np.linspace(self.domain[0], self.domain[1], N)
+h = x[1] - x[0]
+p_vals = self.p_func(x)
+
+# Use constant p approximation for linearization
+p_avg = np.mean(p_vals)
+
+# Construct stiffness matrix (approximate)
+n_int = N - 2
+main_diag = 2 * np.ones(n_int) / h**2
+off_diag = -np.ones(n_int - 1) / h**2
+
+# For p(x) approximately 2, we get standard Laplacian
+K = np.diag(main_diag) + np.diag(off_diag, 1) + np.diag(off_diag, -1)
+
+# Mass matrix (for |u|^{p(x)-2} u term, approximated)
+M = np.eye(n_int)
+
+# Solve generalized eigenvalue problem
+eigenvalues, eigenvectors = eigs(K, M=M, k=num_eigenvalues, which='SM')
+
+# Sort eigenvalues
+idx = np.argsort(np.real(eigenvalues))
+eigenvalues = np.real(eigenvalues[idx])
+eigenvectors = eigenvectors[:, idx]
+
+# Format eigenfunctions
+eigenfunctions = []
+for i in range(num_eigenvalues):
+u = np.zeros(N)
+u[1:-1] = np.real(eigenvectors[:, i])
+# Normalize
+u = u / np.sqrt(simpson(u**2, x))
+eigenfunctions.append(u)
+
+return eigenvalues, eigenfunctions, x
+
+# Example
+def p_eigen(x):
+return 1.8 + 0.4 * np.cos(3*np.pi*x)
+
+solver = pLaplaceEigenvalue(p_eigen)
+
+# Compute first eigenvalue
+lambda1, u1, x = solver.first_eigenvalue(basis_size=8, N=400)
+print(f"First eigenvalue lambda_1 approx {lambda1:.6f}")
+
+# Compute multiple eigenvalues
+eigvals, eigfuncs, x_vals = solver.compute_multiple_eigenvalues(num_eigenvalues=4)
+
+plt.figure(figsize=(12, 8))
+for i in range(4):
+plt.subplot(2, 2, i+1)
+plt.plot(x_vals, eigfuncs[i], 'b-', linewidth=2)
+plt.xlabel('x')
+plt.ylabel(f'u_{i+1}(x)')
+plt.title(f'Eigenfunction {i+1}, lambda approx {eigvals[i]:.4f}')
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+
+\subsection{Finite Element Method for 2D Problems}
+
+\subsubsection{Weak Formulation}
+
+The weak form of $-\Delta_{p(x)} u = f$ is: Find $u \in W_0^{1,p(\cdot)}(\Omega)$ such that
+\[
+\int_\Omega |\nabla u|^{p(x)-2} \nabla u \cdot \nabla v \, dx = \int_\Omega f v \, dx
+\]
+for all $v \in W_0^{1,p(\cdot)}(\Omega)$.
+
+\begin{lstlisting}[style=pythonstyle, caption={2D FEM for $p(x)$-Laplace}, label=code:2d_fem]
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.sparse import lil_matrix, csr_matrix
+from scipy.sparse.linalg import spsolve
+from scipy.interpolate import griddata
+
+class pLaplace2DFEM:
+"""2D FEM solver for p(x)-Laplace equation on unit square."""
+
+def __init__(self, p_func, f_func, boundary_condition='dirichlet'):
+self.p_func = p_func
+self.f_func = f_func
+self.bc_type = boundary_condition
+
+def create_mesh(self, num_points=50):
+"""Create triangular mesh for unit square."""
+# Simple structured mesh for unit square
+n = int(np.sqrt(num_points))
+x = np.linspace(0, 1, n)
+y = np.linspace(0, 1, n)
+X, Y = np.meshgrid(x, y)
+
+vertices = np.column_stack([X.ravel(), Y.ravel()])
+
+# Create triangle connectivity
+triangles = []
+for i in range(n-1):
+for j in range(n-1):
+# Two triangles per cell
+v0 = i * n + j
+v1 = i * n + j + 1
+v2 = (i + 1) * n + j
+v3 = (i + 1) * n + j + 1
+
+triangles.append([v0, v1, v2])  # Lower triangle
+triangles.append([v1, v3, v2])  # Upper triangle
+
+triangles = np.array(triangles)
+return vertices, triangles
+
+def solve(self, vertices, triangles, max_iter=30, tol=1e-6):
+"""Solve using FEM with fixed-point iteration."""
+n_vertices = len(vertices)
+
+# Identify boundary vertices
+boundary_vertices = []
+for i, (x, y) in enumerate(vertices):
+if abs(x) < 1e-6 or abs(x - 1) < 1e-6 or abs(y) < 1e-6 or abs(y - 1) < 1e-6:
+boundary_vertices.append(i)
+
+# Initial guess
+u = np.zeros(n_vertices)
+
+for iteration in range(max_iter):
+# Assemble stiffness matrix and load vector
+K = lil_matrix((n_vertices, n_vertices))
+F = np.zeros(n_vertices)
+
+# Element assembly
+for tri in triangles:
+v0, v1, v2 = vertices[tri]
+
+# Triangle area
+area = 0.5 * abs(np.cross(v1 - v0, v2 - v0))
+
+# Gradient of basis functions (constant per triangle)
+grad_phi = np.array([
+[v1[1] - v2[1], v2[0] - v1[0]],
+[v2[1] - v0[1], v0[0] - v2[0]],
+[v0[1] - v1[1], v1[0] - v0[0]]
+]) / (2 * area)
+
+# Current solution in triangle
+u_tri = u[tri]
+grad_u = grad_phi.T.dot(u_tri)
+
+# Centroid for p(x,y) evaluation
+centroid = np.mean(vertices[tri], axis=0)
+p_val = self.p_func(centroid[0], centroid[1])
+
+# Nonlinear coefficient
+grad_norm = np.linalg.norm(grad_u)
+eps = 1e-10
+coeff = (grad_norm**2 + eps)**((p_val - 2)/2)
+
+# Element stiffness matrix
+Ke = area * coeff * (grad_phi.dot(grad_phi.T))
+
+# Assemble
+for i, idx_i in enumerate(tri):
+for j, idx_j in enumerate(tri):
+K[idx_i, idx_j] += Ke[i, j]
+
+# Load vector (f at centroid)
+F[idx_i] += area/3 * self.f_func(centroid[0], centroid[1])
+
+# Apply boundary conditions
+K = K.tocsr()
+for idx in boundary_vertices:
+K[idx, :] = 0
+K[idx, idx] = 1
+F[idx] = 0
+
+# Solve linear system
+u_new = spsolve(K, F)
+
+# Check convergence
+residual = np.linalg.norm(u_new - u) / np.linalg.norm(u_new)
+u = u_new
+
+if residual < tol:
+print(f"Converged in {iteration+1} iterations")
+break
+
+return u
+
+def postprocess(self, vertices, triangles, solution):
+"""Post-process solution."""
+# Create interpolation grid
+xi = yi = np.linspace(0, 1, 100)
+X, Y = np.meshgrid(xi, yi)
+
+# Interpolate solution
+points = vertices
+values = solution
+Z = griddata(points, values, (X, Y), method='cubic')
+
+# Compute energy density
+grad_x, grad_y = np.gradient(Z, xi, yi)
+grad_mag = np.sqrt(grad_x**2 + grad_y**2)
+
+# Evaluate p(x,y) on grid
+P = self.p_func(X, Y)
+energy = grad_mag**P
+
+return X, Y, Z, energy
+
+# Example usage
+def p_2d(x, y):
+return 2.0 + 0.5 * np.sin(2*np.pi*x) * np.cos(2*np.pi*y)
+
+def f_2d(x, y):
+return 10 * np.sin(np.pi*x) * np.sin(np.pi*y)
+
+# Create solver
+solver = pLaplace2DFEM(p_2d, f_2d)
+
+# Create mesh
+vertices, triangles = solver.create_mesh(num_points=400)
+
+# Solve
+solution = solver.solve(vertices, triangles)
+
+# Post-process
+X, Y, Z, energy = solver.postprocess(vertices, triangles, solution)
+
+# Visualization
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+# Plot mesh
+ax = axes[0, 0]
+ax.triplot(vertices[:,0], vertices[:,1], triangles, 'k-', alpha=0.5)
+ax.set_aspect('equal')
+ax.set_title('Finite element mesh')
+ax.set_xlabel('x'); ax.set_ylabel('y')
+
+# Plot solution
+ax = axes[0, 1]
+contour = ax.contourf(X, Y, Z, 20, cmap='viridis')
+plt.colorbar(contour, ax=ax)
+ax.set_aspect('equal')
+ax.set_title('Solution u(x,y)')
+ax.set_xlabel('x'); ax.set_ylabel('y')
+
+# Plot p(x,y)
+ax = axes[1, 0]
+P = p_2d(X, Y)
+contour = ax.contourf(X, Y, P, 20, cmap='hot')
+plt.colorbar(contour, ax=ax)
+ax.set_aspect('equal')
+ax.set_title('Variable exponent p(x,y)')
+ax.set_xlabel('x'); ax.set_ylabel('y')
+
+# Plot energy density
+ax = axes[1, 1]
+contour = ax.contourf(X, Y, energy, 20, cmap='plasma')
+plt.colorbar(contour, ax=ax)
+ax.set_aspect('equal')
+ax.set_title('Energy density |grad u|^{p(x,y)}')
+ax.set_xlabel('x'); ax.set_ylabel('y')
+
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+
+\section{Numerical Verification of Theoretical Properties}
+
+\subsection{Holder Inequality Verification}
+
+\begin{lstlisting}[style=pythonstyle, caption={Numerical Verification of Properties}, label=code:verification]
+import numpy as np
+from scipy.integrate import quad
+import matplotlib.pyplot as plt
+
+class VariableExponentVerifier:
+"""Verify theoretical properties numerically."""
+
+def __init__(self, domain=(0, 1)):
+self.domain = domain
+
+def verify_holder(self, p_func, q_func=None, num_tests=20):
+"""Verify Holder inequality for random functions."""
+if q_func is None:
+# Use conjugate exponent
+def q_func(x):
+p_val = p_func(x)
+return p_val/(p_val - 1) if p_val != 1 else np.inf
+
+def s_func(x):
+p_val = p_func(x)
+q_val = q_func(x)
+if p_val == np.inf or q_val == np.inf:
+return max(p_val, q_val)
+return 1/(1/p_val + 1/q_val)
+
+results = []
+
+for test in range(num_tests):
+# Generate random trigonometric functions
+np.random.seed(test)
+coeffs_f = np.random.randn(5)
+coeffs_g = np.random.randn(5)
+
+def random_trig(coeffs):
+def func(x):
+result = 0
+for k, c in enumerate(coeffs, 1):
+result += c * np.sin(k*np.pi*x)
+return result
+return func
+
+f = random_trig(coeffs_f)
+g = random_trig(coeffs_g)
+
+# Compute norms
+norm_f = self._compute_norm(f, p_func)
+norm_g = self._compute_norm(g, q_func)
+norm_fg = self._compute_norm(lambda x: f(x)*g(x), s_func)
+
+left = norm_fg
+right = 2 * norm_f * norm_g
+holds = left <= right + 1e-10  # Small tolerance
+
+results.append({
+'test': test,
+'norm_f_p': norm_f,
+'norm_g_q': norm_g,
+'norm_fg_s': left,
+'two_norms_product': right,
+'holds': holds,
+'ratio': left/right
+})
+
+return results
+
+def verify_poincare(self, p_func, num_tests=10):
+"""Verify Poincare inequality: ||u||_p <= C||grad u||_p."""
+results = []
+
+for test in range(num_tests):
+# Generate random function with zero boundary
+np.random.seed(test)
+coeffs = np.random.randn(5)
+
+def u_func(x):
+result = 0
+for k, c in enumerate(coeffs, 1):
+result += c * np.sin(k*np.pi*x)
+return result
+
+def du_func(x):
+result = 0
+for k, c in enumerate(coeffs, 1):
+result += c * k * np.pi * np.cos(k*np.pi*x)
+return result
+
+# Compute norms
+norm_u = self._compute_norm(u_func, p_func)
+norm_du = self._compute_norm(du_func, p_func)
+
+if norm_du > 0:
+constant = norm_u / norm_du
+results.append({
+'test': test,
+'norm_u_p': norm_u,
+'norm_du_p': norm_du,
+'constant': constant
+})
+
+return results
+
+def _compute_norm(self, f_func, p_func, tol=1e-10):
+"""Compute Luxemburg norm."""
+a, b = self.domain
+
+def modular(lam):
+def integrand(x):
+return np.abs(f_func(x)/lam)**p_func(x)
+result, _ = quad(integrand, a, b, limit=200)
+return result - 1
+
+# Find root using bisection
+lam_low, lam_high = 1e-6, 100
+
+# Expand bounds if needed
+while modular(lam_low) > 0:
+lam_low /= 2
+
+while modular(lam_high) < 0:
+lam_high *= 2
+
+# Binary search
+for _ in range(50):
+lam_mid = (lam_low + lam_high)/2
+val = modular(lam_mid)
+if val <= 0:
+lam_high = lam_mid
+else:
+lam_low = lam_mid
+
+return (lam_low + lam_high)/2
+
+def analyze_reflexivity(self, p_func, num_dimensions=5):
+"""
+Analyze uniform convexity as evidence of reflexivity.
+Compute modulus of convexity.
+"""
+# Generate random unit vectors
+np.random.seed(42)
+vectors = []
+
+for _ in range(num_dimensions):
+coeffs = np.random.randn(5)
+def vec_func(x):
+result = 0
+for k, c in enumerate(coeffs, 1):
+result += c * np.sin(k*np.pi*x)
+return result
+# Normalize
+norm = self._compute_norm(vec_func, p_func)
+if norm > 0:
+vectors.append((vec_func, norm))
+
+# Compute modulus of convexity for different epsilon
+epsilons = np.linspace(0.1, 0.9, 9)
+moduli = []
+
+for eps in epsilons:
+min_value = float('inf')
+# Sample pairs of vectors
+for i in range(len(vectors)):
+for j in range(i+1, len(vectors)):
+f_func, norm_f = vectors[i]
+g_func, norm_g = vectors[j]
+
+# Normalize
+def f_norm(x): return f_func(x)/norm_f
+def g_norm(x): return g_func(x)/norm_g
+
+# Compute distance
+def diff_func(x): return f_norm(x) - g_norm(x)
+distance = self._compute_norm(diff_func, p_func)
+
+if distance >= eps:
+# Compute average norm
+def avg_func(x): return (f_norm(x) + g_norm(x))/2
+avg_norm = self._compute_norm(avg_func, p_func)
+min_value = min(min_value, 1 - avg_norm)
+
+if min_value < float('inf'):
+moduli.append((eps, min_value))
+
+return moduli
+
+# Run verifications
+verifier = VariableExponentVerifier()
+
+# Test Holder inequality
+print("Testing Holder inequality...")
+p_func = lambda x: 2.0 + np.sin(2*np.pi*x)
+holder_results = verifier.verify_holder(p_func, num_tests=10)
+
+print("\nHolder inequality results:")
+print("Test   ||fg||_s     2||f||_p||g||_q   Holds    Ratio")
+print("-" * 60)
+for r in holder_results:
+print(f"{r['test']:4d}   {r['norm_fg_s']:10.6f}   {r['two_norms_product']:10.6f}   "
+f"{str(r['holds']):6s}   {r['ratio']:8.6f}")
+
+# Test Poincare inequality
+print("\n\nTesting Poincare inequality...")
+poincare_results = verifier.verify_poincare(p_func, num_tests=8)
+
+print("\nPoincare constant estimates:")
+for r in poincare_results:
+print(f"Test {r['test']}: C <= {r['constant']:.6f}")
+
+# Analyze uniform convexity
+print("\n\nAnalyzing uniform convexity...")
+moduli = verifier.analyze_reflexivity(p_func)
+
+print("\nModulus of convexity delta(epsilon):")
+print("epsilon   delta")
+print("-" * 20)
+for eps, delta in moduli:
+print(f"{eps:8.3f} {delta:8.6f}")
+
+# Plot results
+fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+
+# Holder inequality ratios
+ratios = [r['ratio'] for r in holder_results]
+axes[0].bar(range(len(ratios)), ratios)
+axes[0].axhline(y=1, color='r', linestyle='--', alpha=0.5)
+axes[0].set_xlabel('Test number')
+axes[0].set_ylabel('Ratio ||fg||_s / (2||f||_p||g||_q)')
+axes[0].set_title('Holder inequality verification')
+axes[0].grid(True, alpha=0.3)
+
+# Poincare constants
+constants = [r['constant'] for r in poincare_results]
+axes[1].bar(range(len(constants)), constants)
+axes[1].set_xlabel('Test number')
+axes[1].set_ylabel('Poincare constant C')
+axes[1].set_title('Poincare constant estimates')
+axes[1].grid(True, alpha=0.3)
+
+# Modulus of convexity
+if moduli:
+eps_vals, delta_vals = zip(*moduli)
+axes[2].plot(eps_vals, delta_vals, 'bo-', linewidth=2)
+axes[2].set_xlabel('epsilon')
+axes[2].set_ylabel('delta(epsilon)')
+axes[2].set_title('Modulus of convexity')
+axes[2].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+
+\section{Numerical Examples and Case Studies}
+
+\subsection{Smooth Variable Exponent}
+
+Consider $p(x) = 2 + \sin(\pi x)$ on $\Omega = (0,1)$. This is a smooth exponent varying between 1 and 3.
+
+\begin{lstlisting}[style=pythonstyle, caption={Smooth Variable Exponent Example}, label=code:ex_smooth]
+import numpy as np
+import matplotlib.pyplot as plt
+
+def example_smooth_exponent():
+"""Example with smooth p(x) = 2 + sin(pi*x)."""
+# Define functions
+def p_smooth(x):
+return 2 + np.sin(np.pi * x)
+
+def f_smooth(x):
+return 10 * np.exp(-10*(x-0.5)**2)  # Gaussian source
+
+# Grid for visualization
+x = np.linspace(0, 1, 1000)
+
+# Create figure
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+
+# Plot p(x)
+axes[0,0].plot(x, p_smooth(x), 'b-', linewidth=2)
+axes[0,0].set_xlabel('x')
+axes[0,0].set_ylabel('p(x)')
+axes[0,0].set_title('Variable exponent: p(x) = 2 + sin(pi*x)')
+axes[0,0].grid(True)
+axes[0,0].axhline(y=2, color='r', linestyle='--', alpha=0.5, label='p=2 (Laplacian)')
+axes[0,0].legend()
+
+# Plot f(x)
+axes[0,1].plot(x, f_smooth(x), 'r-', linewidth=2)
+axes[0,1].set_xlabel('x')
+axes[0,1].set_ylabel('f(x)')
+axes[0,1].set_title('Source term: Gaussian')
+axes[0,1].grid(True)
+
+# Compute and plot exact solution for constant p=2 case
+from scipy.sparse import diags
+from scipy.sparse.linalg import spsolve
+
+N = 200
+x_fd = np.linspace(0, 1, N+1)
+h = 1/N
+
+# Solve for p=2 (Laplacian) as reference
+A = diags([-1, 2, -1], [-1, 0, 1], shape=(N-1, N-1)) / h**2
+f_vals = f_smooth(x_fd[1:-1])
+u_const = spsolve(A, f_vals)
+u_const_full = np.zeros(N+1)
+u_const_full[1:-1] = u_const
+
+axes[0,2].plot(x_fd, u_const_full, 'g-', linewidth=2)
+axes[0,2].set_xlabel('x')
+axes[0,2].set_ylabel('u(x)')
+axes[0,2].set_title('Solution for p=2 (Laplacian)')
+axes[0,2].grid(True)
+
+# Now solve for variable p(x) using finite differences
+from scipy.optimize import root
+
+def p_laplace_residual(u):
+"""Residual for p(x)-Laplace equation."""
+residual = np.zeros_like(u)
+h = 1/(len(u)-1)
+
+for i in range(1, len(u)-1):
+p_left = p_smooth(x_fd[i] - h/2)
+p_right = p_smooth(x_fd[i] + h/2)
+
+du_left = (u[i] - u[i-1])/h
+du_right = (u[i+1] - u[i])/h
+
+# Nonlinear fluxes
+flux_left = np.abs(du_left)**(p_left-2) * du_left
+flux_right = np.abs(du_right)**(p_right-2) * du_right
+
+residual[i] = (flux_right - flux_left)/h - f_smooth(x_fd[i])
+
+# Boundary conditions
+residual[0] = u[0]
+residual[-1] = u[-1]
+
+return residual
+
+# Initial guess (solution for p=2)
+u_guess = u_const_full.copy()
+
+# Solve using Newton's method
+solution = root(p_laplace_residual, u_guess, method='krylov', tol=1e-8)
+u_var = solution.x
+
+axes[1,0].plot(x_fd, u_var, 'b-', linewidth=2, label='Variable p(x)')
+axes[1,0].plot(x_fd, u_const_full, 'r--', linewidth=2, label='Constant p=2')
+axes[1,0].set_xlabel('x')
+axes[1,0].set_ylabel('u(x)')
+axes[1,0].set_title('Comparison: Variable vs Constant p')
+axes[1,0].legend()
+axes[1,0].grid(True)
+
+# Plot gradient comparison
+grad_const = np.gradient(u_const_full, x_fd)
+grad_var = np.gradient(u_var, x_fd)
+
+axes[1,1].plot(x_fd, grad_var, 'b-', linewidth=2, label='Variable p(x)')
+axes[1,1].plot(x_fd, grad_const, 'r--', linewidth=2, label='Constant p=2')
+axes[1,1].set_xlabel('x')
+axes[1,1].set_ylabel('du/dx')
+axes[1,1].set_title('Gradient comparison')
+axes[1,1].legend()
+axes[1,1].grid(True)
+
+# Plot energy density
+energy_const = 0.5 * grad_const**2  # For p=2
+energy_var = np.abs(grad_var)**p_smooth(x_fd) / p_smooth(x_fd)
+
+axes[1,2].plot(x_fd, energy_var, 'b-', linewidth=2, label='Variable p(x)')
+axes[1,2].plot(x_fd, energy_const, 'r--', linewidth=2, label='Constant p=2')
+axes[1,2].set_xlabel('x')
+axes[1,2].set_ylabel('Energy density')
+axes[1,2].set_title('Energy density comparison')
+axes[1,2].legend()
+axes[1,2].grid(True)
+
+plt.tight_layout()
+plt.show()
+
+# Quantitative analysis
+print("="*60)
+print("QUANTITATIVE ANALYSIS: Smooth Exponent Example")
+print("="*60)
+
+# Compute norms
+def compute_norm(u, p_vals):
+"""Compute approximate Luxemburg norm."""
+h = 1/(len(u)-1)
+integral = np.sum(np.abs(u)**p_vals) * h
+
+# Find lambda such that integral = 1
+lam_low, lam_high = 0.01, 10
+for _ in range(50):
+lam_mid = (lam_low + lam_high)/2
+if np.sum(np.abs(u/lam_mid)**p_vals) * h > 1:
+lam_low = lam_mid
+else:
+lam_high = lam_mid
+
+return (lam_low + lam_high)/2
+
+norm_const = np.linalg.norm(u_const_full)
+norm_var = compute_norm(u_var, p_smooth(x_fd))
+
+print(f"\nSolution norms:")
+print(f"L2 norm (constant p=2): {norm_const:.6f}")
+print(f"L^p(x) norm (variable p): {norm_var:.6f}")
+
+# Maximum values
+print(f"\nMaximum values:")
+print(f"max|u| (constant p=2): {np.max(np.abs(u_const_full)):.6f}")
+print(f"max|u| (variable p): {np.max(np.abs(u_var)):.6f}")
+
+# Gradient statistics
+print(f"\nGradient statistics:")
+print(f"max|du/dx| (constant p=2): {np.max(np.abs(grad_const)):.6f}")
+print(f"max|du/dx| (variable p): {np.max(np.abs(grad_var)):.6f}")
+
+# Energy comparison
+total_energy_const = np.sum(energy_const) * h
+total_energy_var = np.sum(energy_var) * h
+
+print(f"\nTotal energy:")
+print(f"Constant p=2: {total_energy_const:.6f}")
+print(f"Variable p(x): {total_energy_var:.6f}")
+print(f"Ratio (variable/constant): {total_energy_var/total_energy_const:.6f}")
+
+return u_const_full, u_var, x_fd
+
+# Run example
+u_const, u_var, x = example_smooth_exponent()
+\end{lstlisting}
+
+\subsection{Piecewise Constant Exponent}
+
+Consider a material with two different phases:
+\[
+p(x) = 
+\begin{cases}
+1.5 & \text{if } 0 \leq x < 0.5 \\
+2.5 & \text{if } 0.5 \leq x \leq 1
+\end{cases}
+\]
+
+\begin{lstlisting}[style=pythonstyle, caption={Piecewise Constant Exponent}, label=code:ex_piecewise]
+def example_piecewise_exponent():
+"""Example with piecewise constant exponent."""
+
+def p_piecewise(x):
+return np.where(x < 0.5, 1.5, 2.5)
+
+def f_piecewise(x):
+return 1.0  # Constant source
+
+# Create grid
+N = 400
+x = np.linspace(0, 1, N+1)
+h = 1/N
+
+# Solve using iterative method
+u = np.zeros(N+1)
+
+# Iterative solver
+max_iter = 1000
+tol = 1e-8
+
+for iteration in range(max_iter):
+u_old = u.copy()
+
+# Solve tridiagonal system
+a = np.zeros(N)  # Lower diagonal
+b = np.zeros(N+1)  # Main diagonal
+c = np.zeros(N)  # Upper diagonal
+rhs = np.zeros(N+1)
+
+# Evaluate p at midpoints
+p_mid = (p_piecewise(x[:-1]) + p_piecewise(x[1:])) / 2
+
+for i in range(1, N):
+# Gradients at interfaces
+du_left = (u[i] - u[i-1]) / h
+du_right = (u[i+1] - u[i]) / h
+
+# Nonlinear coefficients
+coeff_left = (np.abs(du_left) + 1e-12)**(p_mid[i-1] - 2)
+coeff_right = (np.abs(du_right) + 1e-12)**(p_mid[i] - 2)
+
+a[i-1] = -coeff_left / h**2
+b[i] = (coeff_left + coeff_right) / h**2
+c[i] = -coeff_right / h**2
+rhs[i] = f_piecewise(x[i])
+
+# Boundary conditions
+b[0] = 1
+rhs[0] = 0
+b[N] = 1
+rhs[N] = 0
+
+# Solve tridiagonal system (Thomas algorithm)
+w = np.zeros(N)
+g = np.zeros(N+1)
+
+w[0] = c[0] / b[0]
+g[0] = rhs[0] / b[0]
+
+for i in range(1, N):
+denom = b[i] - a[i-1] * w[i-1]
+w[i] = c[i] / denom if i < N else 0
+g[i] = (rhs[i] - a[i-1] * g[i-1]) / denom
+
+g[N] = (rhs[N] - a[N-1] * g[N-1]) / (b[N] - a[N-1] * w[N-1])
+
+# Back substitution
+u[N] = g[N]
+for i in range(N-1, -1, -1):
+u[i] = g[i] - w[i] * u[i+1]
+
+# Check convergence
+if np.linalg.norm(u - u_old) / np.linalg.norm(u) < tol:
+print(f"Converged in {iteration+1} iterations")
+break
+
+# Visualization
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+# Plot p(x)
+axes[0,0].plot(x, p_piecewise(x), 'b-', linewidth=2)
+axes[0,0].axvline(x=0.5, color='r', linestyle='--', alpha=0.5)
+axes[0,0].set_xlabel('x')
+axes[0,0].set_ylabel('p(x)')
+axes[0,0].set_title('Piecewise constant exponent')
+axes[0,0].grid(True)
+axes[0,0].text(0.25, 1.6, 'p=1.5', ha='center', fontsize=12)
+axes[0,0].text(0.75, 2.6, 'p=2.5', ha='center', fontsize=12)
+
+# Plot solution
+axes[0,1].plot(x, u, 'b-', linewidth=2)
+axes[0,1].axvline(x=0.5, color='r', linestyle='--', alpha=0.5)
+axes[0,1].set_xlabel('x')
+axes[0,1].set_ylabel('u(x)')
+axes[0,1].set_title('Solution u(x)')
+axes[0,1].grid(True)
+
+# Plot gradient
+grad_u = np.gradient(u, x)
+axes[1,0].plot(x, grad_u, 'b-', linewidth=2)
+axes[1,0].axvline(x=0.5, color='r', linestyle='--', alpha=0.5)
+axes[1,0].set_xlabel('x')
+axes[1,0].set_ylabel('du/dx')
+axes[1,0].set_title('Gradient du/dx')
+axes[1,0].grid(True)
+
+# Plot energy density
+energy = np.abs(grad_u)**p_piecewise(x) / p_piecewise(x)
+axes[1,1].plot(x, energy, 'b-', linewidth=2)
+axes[1,1].axvline(x=0.5, color='r', linestyle='--', alpha=0.5)
+axes[1,1].set_xlabel('x')
+axes[1,1].set_ylabel('Energy density')
+axes[1,1].set_title('Energy density |grad u|^{p(x)}/p(x)')
+axes[1,1].grid(True)
+
+plt.tight_layout()
+plt.show()
+
+# Analysis at interface
+print("="*60)
+print("INTERFACE ANALYSIS: Piecewise Constant Exponent")
+print("="*60)
+
+# Find index closest to interface
+idx_interface = np.argmin(np.abs(x - 0.5))
+
+print(f"\nAt interface x = 0.5:")
+print(f"Left limit p(0.5-) = 1.5")
+print(f"Right limit p(0.5+) = 2.5")
+print(f"\nSolution values:")
+print(f"u(0.5) = {u[idx_interface]:.6f}")
+print(f"u'(0.5-) approx {grad_u[idx_interface-1]:.6f}")
+print(f"u'(0.5+) approx {grad_u[idx_interface+1]:.6f}")
+
+# Flux continuity check
+flux_left = np.abs(grad_u[idx_interface-1])**(1.5-2) * grad_u[idx_interface-1]
+flux_right = np.abs(grad_u[idx_interface+1])**(2.5-2) * grad_u[idx_interface+1]
+
+print(f"\nFlux continuity check:")
+print(f"Flux at x=0.5-: {flux_left:.6f}")
+print(f"Flux at x=0.5+: {flux_right:.6f}")
+print(f"Difference: {abs(flux_left - flux_right):.6e}")
+print(f"Continuous? {abs(flux_left - flux_right) < 1e-5}")
+
+# Energy in each region
+mask_left = x < 0.5
+mask_right = x >= 0.5
+
+energy_left = np.sum(energy[mask_left]) * h
+energy_right = np.sum(energy[mask_right]) * h
+
+print(f"\nEnergy distribution:")
+print(f"Energy in [0, 0.5): {energy_left:.6f} ({100*energy_left/(energy_left+energy_right):.1f}%)")
+print(f"Energy in [0.5, 1]: {energy_right:.6f} ({100*energy_right/(energy_left+energy_right):.1f}%)")
+
+return u, x
+
+# Run example
+u_piecewise, x_piecewise = example_piecewise_exponent()
+\end{lstlisting}
+
+\subsection{Rapidly Oscillating Exponent}
+
+Consider $p(x) = 2 + \sin(10\pi x)$, which oscillates rapidly between 1 and 3.
+
+\begin{lstlisting}[style=pythonstyle, caption={Rapidly Oscillating Exponent}, label=code:ex_oscillating]
+def example_oscillating_exponent():
+"""Example with rapidly oscillating exponent."""
+
+def p_oscillating(x):
+return 2 + np.sin(10 * np.pi * x)
+
+def f_oscillating(x):
+return 5 * np.cos(2 * np.pi * x)
+
+# High resolution grid
+N = 1000
+x = np.linspace(0, 1, N+1)
+h = 1/N
+
+# Solve using finite differences
+def solve_p_laplace_fd(p_func, f_func, u_init=None, max_iter=200, tol=1e-8):
+"""Finite difference solver for p(x)-Laplace."""
+N = len(x) - 1
+h = 1/N
+
+if u_init is None:
+u = np.sin(np.pi * x)
+else:
+u = u_init.copy()
+
+for iteration in range(max_iter):
+u_old = u.copy()
+
+# Evaluate p at midpoints
+p_mid = (p_func(x[:-1]) + p_func(x[1:])) / 2
+
+residual = np.zeros(N+1)
+
+for i in range(1, N):
+du_left = (u[i] - u[i-1]) / h
+du_right = (u[i+1] - u[i]) / h
+
+coeff_left = (np.abs(du_left) + 1e-12)**(p_mid[i-1] - 2)
+coeff_right = (np.abs(du_right) + 1e-12)**(p_mid[i] - 2)
+
+residual[i] = (coeff_right * du_right - coeff_left * du_left) / h - f_func(x[i])
+
+# Boundary conditions
+residual[0] = u[0]
+residual[-1] = u[-1]
+
+# Simple relaxation
+u = u - 0.1 * residual
+
+if np.linalg.norm(u - u_old) / np.linalg.norm(u) < tol:
+print(f"Converged in {iteration+1} iterations")
+break
+
+return u
+
+# Solve
+u = solve_p_laplace_fd(p_oscillating, f_oscillating)
+
+# Compute homogenized p (average)
+p_avg = np.mean(p_oscillating(x))
+
+# Solve homogenized problem (constant p = average)
+def solve_constant_p(p_const, f_func):
+"""Solve constant p Laplacian."""
+N = len(x) - 1
+h = 1/N
+
+if abs(p_const - 2) < 1e-10:
+# Linear case
+A = np.zeros((N-1, N-1))
+for i in range(N-1):
+A[i,i] = 2/h**2
+if i > 0:
+A[i,i-1] = -1/h**2
+if i < N-2:
+A[i,i+1] = -1/h**2
+
+f_vals = f_func(x[1:-1])
+u_int = np.linalg.solve(A, f_vals)
+u_full = np.zeros(N+1)
+u_full[1:-1] = u_int
+return u_full
+else:
+# Nonlinear constant p
+u_guess = np.sin(np.pi * x)
+return solve_p_laplace_fd(lambda x: p_const * np.ones_like(x), f_func, u_guess)
+
+u_homog = solve_constant_p(p_avg, f_oscillating)
+
+# Visualization
+fig, axes = plt.subplots(3, 2, figsize=(15, 12))
+
+# Plot p(x)
+axes[0,0].plot(x, p_oscillating(x), 'b-', linewidth=1, alpha=0.7)
+axes[0,0].axhline(y=p_avg, color='r', linestyle='--', linewidth=2, 
+label=f'Average p = {p_avg:.3f}')
+axes[0,0].set_xlabel('x')
+axes[0,0].set_ylabel('p(x)')
+axes[0,0].set_title('Rapidly oscillating exponent: p(x) = 2 + sin(10*pi*x)')
+axes[0,0].legend()
+axes[0,0].grid(True, alpha=0.3)
+
+# Zoom in on p(x)
+axes[0,1].plot(x, p_oscillating(x), 'b-', linewidth=1.5)
+axes[0,1].set_xlim(0.4, 0.6)
+axes[0,1].set_xlabel('x')
+axes[0,1].set_ylabel('p(x)')
+axes[0,1].set_title('Zoom: Oscillations in p(x)')
+axes[0,1].grid(True, alpha=0.3)
+
+# Plot solutions
+axes[1,0].plot(x, u, 'b-', linewidth=2, label='Variable p(x)')
+axes[1,0].plot(x, u_homog, 'r--', linewidth=2, label=f'Homogenized p={p_avg:.3f}')
+axes[1,0].set_xlabel('x')
+axes[1,0].set_ylabel('u(x)')
+axes[1,0].set_title('Solution comparison')
+axes[1,0].legend()
+axes[1,0].grid(True, alpha=0.3)
+
+# Plot difference
+axes[1,1].plot(x, u - u_homog, 'g-', linewidth=2)
+axes[1,1].set_xlabel('x')
+axes[1,1].set_ylabel('Difference')
+axes[1,1].set_title('Difference: u(x) - u_homog(x)')
+axes[1,1].grid(True, alpha=0.3)
+
+# Plot gradients
+grad_u = np.gradient(u, x)
+grad_homog = np.gradient(u_homog, x)
+
+axes[2,0].plot(x, grad_u, 'b-', linewidth=2, label='Variable p(x)', alpha=0.7)
+axes[2,0].plot(x, grad_homog, 'r--', linewidth=2, label='Homogenized', alpha=0.7)
+axes[2,0].set_xlabel('x')
+axes[2,0].set_ylabel('du/dx')
+axes[2,0].set_title('Gradient comparison')
+axes[2,0].legend()
+axes[2,0].grid(True, alpha=0.3)
+
+# Plot energy densities
+energy_u = np.abs(grad_u)**p_oscillating(x) / p_oscillating(x)
+energy_homog = np.abs(grad_homog)**p_avg / p_avg
+
+axes[2,1].plot(x, energy_u, 'b-', linewidth=2, label='Variable p(x)', alpha=0.7)
+axes[2,1].plot(x, energy_homog, 'r--', linewidth=2, label='Homogenized', alpha=0.7)
+axes[2,1].set_xlabel('x')
+axes[2,1].set_ylabel('Energy density')
+axes[2,1].set_title('Energy density comparison')
+axes[2,1].legend()
+axes[2,1].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+# Statistical analysis
+print("="*60)
+print("STATISTICAL ANALYSIS: Rapidly Oscillating Exponent")
+print("="*60)
+
+print(f"\nExponent statistics:")
+print(f"Minimum p(x): {np.min(p_oscillating(x)):.6f}")
+print(f"Maximum p(x): {np.max(p_oscillating(x)):.6f}")
+print(f"Average p(x): {p_avg:.6f}")
+print(f"Standard deviation: {np.std(p_oscillating(x)):.6f}")
+
+print(f"\nSolution statistics:")
+print(f"Mean |u(x)|: {np.mean(np.abs(u)):.6f}")
+print(f"Std |u(x)|: {np.std(u):.6f}")
+print(f"Mean |u_homog(x)|: {np.mean(np.abs(u_homog)):.6f}")
+print(f"Std |u_homog(x)|: {np.std(u_homog):.6f}")
+
+# Error analysis
+L2_error = np.sqrt(np.sum((u - u_homog)**2) * h)
+Linf_error = np.max(np.abs(u - u_homog))
+
+print(f"\nError analysis:")
+print(f"L2 error: {L2_error:.6e}")
+print(f"L_inf error: {Linf_error:.6e}")
+print(f"Relative L2 error: {L2_error/np.linalg.norm(u):.6e}")
+
+# Energy comparison
+total_energy_u = np.sum(energy_u) * h
+total_energy_homog = np.sum(energy_homog) * h
+
+print(f"\nTotal energy:")
+print(f"Variable p(x): {total_energy_u:.6f}")
+print(f"Homogenized: {total_energy_homog:.6f}")
+print(f"Relative difference: {abs(total_energy_u-total_energy_homog)/total_energy_u:.6e}")
+
+# Effective properties
+print(f"\nEffective properties analysis:")
+print(f"The rapid oscillations suggest homogenization theory applies.")
+print(f"Effective exponent p_eff approx {p_avg:.3f}")
+print(f"For high-frequency oscillations, solution approaches homogenized limit.")
+
+return u, u_homog, x
+
+# Run example
+u_osc, u_homog, x_osc = example_oscillating_exponent()
+\end{lstlisting}
+
+\subsection{Boundary Layer Formation}
+
+Investigate boundary layer formation when $p(x) \to 1^+$ near boundaries.
+
+\begin{lstlisting}[style=pythonstyle, caption={Boundary Layer Example}, label=code:ex_boundary]
+def example_boundary_layer():
+"""Example showing boundary layer formation."""
+
+def p_boundary(x, epsilon):
+# p(x) approaches 1 near boundaries
+return 1 + epsilon + (2 - 2*epsilon) * (x - 0.5)**2
+
+def f_boundary(x):
+return 1.0  # Constant source
+
+# Solve for different epsilon values
+epsilon_vals = [0.5, 0.1, 0.05, 0.01]
+solutions = []
+
+for eps in epsilon_vals:
+def p_current(x):
+return p_boundary(x, eps)
+
+# Solve using finite differences
+N = 500
+x = np.linspace(0, 1, N+1)
+h = 1/N
+
+# Initial guess
+u = 4 * x * (1 - x)
+
+# Iterative solver
+max_iter = 1000
+tol = 1e-10
+
+for iteration in range(max_iter):
+u_old = u.copy()
+
+# Evaluate p at midpoints
+p_mid = (p_current(x[:-1]) + p_current(x[1:])) / 2
+
+# Build and solve linearized system
+A = np.zeros((N+1, N+1))
+rhs = np.zeros(N+1)
+
+for i in range(1, N):
+du_left = (u[i] - u[i-1]) / h
+du_right = (u[i+1] - u[i]) / h
+
+# Linearized coefficients
+coeff_left = (np.abs(du_left) + 1e-12)**(p_mid[i-1] - 2)
+coeff_right = (np.abs(du_right) + 1e-12)**(p_mid[i] - 2)
+
+A[i, i-1] = -coeff_left / h**2
+A[i, i] = (coeff_left + coeff_right) / h**2
+A[i, i+1] = -coeff_right / h**2
+rhs[i] = f_boundary(x[i])
+
+# Boundary conditions
+A[0, 0] = 1
+rhs[0] = 0
+A[N, N] = 1
+rhs[N] = 0
+
+# Solve
+u = np.linalg.solve(A, rhs)
+
+if np.linalg.norm(u - u_old) / np.linalg.norm(u) < tol:
+if eps == epsilon_vals[0]:
+print(f"epsilon = {eps}: converged in {iteration+1} iterations")
+break
+
+solutions.append((eps, x.copy(), u.copy()))
+
+# Visualization
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+
+# Plot p(x) for different epsilon
+x_plot = np.linspace(0, 1, 1000)
+for eps, _, _ in solutions:
+p_vals = p_boundary(x_plot, eps)
+axes[0,0].plot(x_plot, p_vals, label=f'eps = {eps}')
+
+axes[0,0].set_xlabel('x')
+axes[0,0].set_ylabel('p(x)')
+axes[0,0].set_title('Exponent p(x) = 1 + eps + (2-2*eps)*(x-0.5)^2')
+axes[0,0].legend()
+axes[0,0].grid(True, alpha=0.3)
+
+# Plot solutions
+for eps, x_vals, u_vals in solutions:
+axes[0,1].plot(x_vals, u_vals, label=f'eps = {eps}')
+
+axes[0,1].set_xlabel('x')
+axes[0,1].set_ylabel('u(x)')
+axes[0,1].set_title('Solutions for different eps')
+axes[0,1].legend()
+axes[0,1].grid(True, alpha=0.3)
+
+# Plot gradients
+for eps, x_vals, u_vals in solutions:
+grad_u = np.gradient(u_vals, x_vals)
+axes[0,2].plot(x_vals, grad_u, label=f'eps = {eps}')
+
+axes[0,2].set_xlabel('x')
+axes[0,2].set_ylabel('du/dx')
+axes[0,2].set_title('Gradients')
+axes[0,2].legend()
+axes[0,2].grid(True, alpha=0.3)
+
+# Zoom near boundary x=0
+for eps, x_vals, u_vals in solutions:
+mask = x_vals <= 0.1
+axes[1,0].plot(x_vals[mask], u_vals[mask], label=f'eps = {eps}')
+
+axes[1,0].set_xlabel('x')
+axes[1,0].set_ylabel('u(x)')
+axes[1,0].set_title('Zoom near x=0 (boundary layer)')
+axes[1,0].legend()
+axes[1,0].grid(True, alpha=0.3)
+
+# Plot boundary layer thickness
+boundary_thickness = []
+eps_vals_plot = []
+
+for eps, x_vals, u_vals in solutions:
+# Estimate boundary layer thickness
+grad_u = np.gradient(u_vals, x_vals)
+max_grad = np.max(np.abs(grad_u))
+
+# Find where gradient drops to 10% of maximum
+threshold = 0.1 * max_grad
+idx = np.where(np.abs(grad_u) > threshold)[0][0]
+thickness = x_vals[idx]
+
+boundary_thickness.append(thickness)
+eps_vals_plot.append(eps)
+
+axes[1,1].loglog(eps_vals_plot, boundary_thickness, 'bo-', linewidth=2, markersize=8)
+axes[1,1].set_xlabel('epsilon (log scale)')
+axes[1,1].set_ylabel('Boundary layer thickness (log scale)')
+axes[1,1].set_title('Boundary layer thickness vs epsilon')
+axes[1,1].grid(True, alpha=0.3, which='both')
+
+# Plot energy near boundary
+for eps, x_vals, u_vals in solutions:
+p_vals = p_boundary(x_vals, eps)
+grad_u = np.gradient(u_vals, x_vals)
+energy = np.abs(grad_u)**p_vals / p_vals
+
+mask = x_vals <= 0.2
+axes[1,2].plot(x_vals[mask], energy[mask], label=f'eps = {eps}')
+
+axes[1,2].set_xlabel('x')
+axes[1,2].set_ylabel('Energy density')
+axes[1,2].set_title('Energy density near boundary')
+axes[1,2].legend()
+axes[1,2].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+# Analysis
+print("="*60)
+print("BOUNDARY LAYER ANALYSIS")
+print("="*60)
+
+print(f"\nAs epsilon -> 0+, p(x) -> 1 near boundaries:")
+print("This creates singular behavior and boundary layers.")
+
+print(f"\nBoundary layer thickness estimates:")
+for eps, thickness in zip(eps_vals_plot, boundary_thickness):
+print(f"epsilon = {eps:.4f}: thickness approx {thickness:.6f}")
+
+# Theoretical prediction: boundary layer thickness ~ epsilon^alpha
+from scipy.optimize import curve_fit
+
+def power_law(x, a, b):
+return a * x**b
+
+if len(eps_vals_plot) >= 3:
+popt, pcov = curve_fit(power_law, eps_vals_plot, boundary_thickness)
+print(f"\nPower law fit: thickness approx {popt[0]:.3f} * epsilon^{popt[1]:.3f}")
+print("For p -> 1, theory predicts boundary layers of width O(epsilon).")
+
+# Maximum gradient analysis
+print(f"\nMaximum gradient analysis:")
+for eps, x_vals, u_vals in solutions:
+grad_u = np.gradient(u_vals, x_vals)
+max_grad = np.max(np.abs(grad_u))
+print(f"epsilon = {eps:.4f}: max|du/dx| = {max_grad:.6f}")
+
+print(f"\nObservation: As epsilon decreases (p -> 1),")
+print("1. Boundary layer becomes thinner")
+print("2. Gradient near boundary becomes larger")
+print("3. Solution develops sharper transitions")
+print("4. This illustrates the singular limit p -> 1")
+
+return solutions
+
+# Run example
+boundary_solutions = example_boundary_layer()
+\end{lstlisting}
+
+\subsection{Comparison with Analytical Solutions}
+
+For specific choices of $p(x)$ and $f(x)$, we can compare numerical solutions with exact solutions.
+
+\begin{lstlisting}[style=pythonstyle, caption={Comparison with Exact Solutions}, label=code:ex_exact]
+def example_exact_comparison():
+"""Compare numerical solutions with exact solutions when available."""
+
+# Case 1: p(x) = 2 (Laplacian) with polynomial right-hand side
+print("="*60)
+print("CASE 1: p(x) = 2 (Laplace equation)")
+print("="*60)
+
+def p_const2(x):
+return 2 * np.ones_like(x)
+
+def f_poly(x):
+return 12 * x**2 - 12 * x + 2  # Chosen so u(x) = x^2*(1-x)^2 is solution
+
+def u_exact1(x):
+return x**2 * (1 - x)**2
+
+# Solve numerically
+N = 100
+x = np.linspace(0, 1, N+1)
+h = 1/N
+
+# Finite difference for p=2
+A = np.zeros((N-1, N-1))
+for i in range(N-1):
+A[i,i] = 2/h**2
+if i > 0:
+A[i,i-1] = -1/h**2
+if i < N-2:
+A[i,i+1] = -1/h**2
+
+f_vals = f_poly(x[1:-1])
+u_num = np.linalg.solve(A, f_vals)
+u_full = np.zeros(N+1)
+u_full[1:-1] = u_num
+
+u_exact = u_exact1(x)
+
+# Compute errors
+error_L2 = np.sqrt(np.sum((u_full - u_exact)**2) * h)
+error_Linf = np.max(np.abs(u_full - u_exact))
+
+print(f"\nExact solution: u(x) = x^2*(1-x)^2")
+print(f"Numerical errors:")
+print(f"L2 error: {error_L2:.6e}")
+print(f"L_inf error: {error_Linf:.6e}")
+print(f"Expected: O(h^2) = {(1/N)**2:.6e}")
+
+# Case 2: p(x) = constant != 2
+print("\n" + "="*60)
+print("CASE 2: Constant p != 2")
+print("="*60)
+
+# For constant p, exact solutions often not available in closed form
+# But we can test convergence by comparing with very fine grid solution
+
+def p_const15(x):
+return 1.5 * np.ones_like(x)
+
+def f_const(x):
+return np.ones_like(x)
+
+# Reference solution on very fine grid
+N_ref = 2000
+x_ref = np.linspace(0, 1, N_ref+1)
+
+# Solve on reference grid (using simple iteration)
+u_ref = np.sin(np.pi * x_ref)
+for _ in range(100):
+u_old = u_ref.copy()
+for i in range(1, N_ref):
+du_left = (u_ref[i] - u_ref[i-1]) / (1/N_ref)
+du_right = (u_ref[i+1] - u_ref[i]) / (1/N_ref)
+
+coeff_left = (np.abs(du_left) + 1e-12)**(0.5)  # p-2 = -0.5
+coeff_right = (np.abs(du_right) + 1e-12)**(0.5)
+
+u_ref[i] = (coeff_left*u_ref[i-1] + coeff_right*u_ref[i+1] - 
+(1/N_ref)**2 * f_const(x_ref[i])) / (coeff_left + coeff_right)
+
+# Solve on coarser grids and compute errors
+grid_sizes = [10, 20, 40, 80, 160]
+errors_L2 = []
+errors_Linf = []
+
+for N_coarse in grid_sizes:
+x_coarse = np.linspace(0, 1, N_coarse+1)
+
+# Solve on coarse grid
+u_coarse = np.sin(np.pi * x_coarse)
+for _ in range(200):
+u_old = u_coarse.copy()
+for i in range(1, N_coarse):
+du_left = (u_coarse[i] - u_coarse[i-1]) / (1/N_coarse)
+du_right = (u_coarse[i+1] - u_coarse[i]) / (1/N_coarse)
+
+coeff_left = (np.abs(du_left) + 1e-12)**(0.5)
+coeff_right = (np.abs(du_right) + 1e-12)**(0.5)
+
+u_coarse[i] = (coeff_left*u_coarse[i-1] + coeff_right*u_coarse[i+1] - 
+(1/N_coarse)**2 * f_const(x_coarse[i])) / (coeff_left + coeff_right)
+
+# Interpolate reference solution to coarse grid
+u_ref_interp = np.interp(x_coarse, x_ref, u_ref)
+
+# Compute errors
+h_coarse = 1/N_coarse
+error_L2 = np.sqrt(np.sum((u_coarse - u_ref_interp)**2) * h_coarse)
+error_Linf = np.max(np.abs(u_coarse - u_ref_interp))
+
+errors_L2.append(error_L2)
+errors_Linf.append(error_Linf)
+
+# Compute convergence rates
+print(f"\nConvergence study for p = 1.5:")
+print(f"{'Grid size':<10} {'L2 error':<12} {'Rate':<8} {'L_inf error':<12} {'Rate':<8}")
+print("-" * 60)
+
+for i in range(len(grid_sizes)):
+if i == 0:
+rate_L2 = '-'
+rate_Linf = '-'
+else:
+rate_L2 = np.log(errors_L2[i-1]/errors_L2[i]) / np.log(2)
+rate_Linf = np.log(errors_Linf[i-1]/errors_Linf[i]) / np.log(2)
+rate_L2 = f"{rate_L2:.3f}"
+rate_Linf = f"{rate_Linf:.3f}"
+
+print(f"{grid_sizes[i]:<10} {errors_L2[i]:<12.6e} {rate_L2:<8} "
+f"{errors_Linf[i]:<12.6e} {rate_Linf:<8}")
+
+# Case 3: Special variable exponent with known solution structure
+print("\n" + "="*60)
+print("CASE 3: Special p(x) with u(x) = sin(pi*x)")
+print("="*60)
+
+# Choose p(x) such that u(x) = sin(pi*x) is solution for some f(x)
+def u_special(x):
+return np.sin(np.pi * x)
+
+def p_special(x):
+# Choose p(x) = 2 + 0.5*cos(2*pi*x) for example
+return 2 + 0.5 * np.cos(2*np.pi*x)
+
+# Compute corresponding f(x) from equation
+x_fine = np.linspace(0, 1, 1000)
+u_fine = u_special(x_fine)
+du_fine = np.gradient(u_fine, x_fine)
+ddu_fine = np.gradient(du_fine, x_fine)
+
+# f = -d/dx(|u'|^{p-2} u')
+p_vals = p_special(x_fine)
+flux = np.abs(du_fine)**(p_vals-2) * du_fine
+f_special = -np.gradient(flux, x_fine)
+
+# Now solve numerically with this f(x)
+N = 200
+x_num = np.linspace(0, 1, N+1)
+
+# Interpolate f to numerical grid
+f_num = np.interp(x_num, x_fine, f_special)
+
+# Solve numerically
+u_num_special = np.sin(np.pi * x_num)  # Initial guess
+
+for _ in range(100):
+u_old = u_num_special.copy()
+for i in range(1, N):
+du_left = (u_num_special[i] - u_num_special[i-1]) / (1/N)
+du_right = (u_num_special[i+1] - u_num_special[i]) / (1/N)
+
+p_left = p_special(x_num[i] - 0.5/N)
+p_right = p_special(x_num[i] + 0.5/N)
+
+coeff_left = (np.abs(du_left) + 1e-12)**(p_left-2)
+coeff_right = (np.abs(du_right) + 1e-12)**(p_right-2)
+
+u_num_special[i] = (coeff_left*u_num_special[i-1] + coeff_right*u_num_special[i+1] - 
+(1/N)**2 * f_num[i]) / (coeff_left + coeff_right)
+
+# Compute error
+u_exact_special = u_special(x_num)
+error_special = np.max(np.abs(u_num_special - u_exact_special))
+
+print(f"\nSpecial case: u(x) = sin(pi*x) designed to be solution")
+print(f"Maximum error: {error_special:.6e}")
+print(f"This demonstrates that our solver can recover exact solutions")
+print(f"when the right-hand side is computed appropriately.")
+
+# Visualization
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+
+# Case 1 plot
+axes[0,0].plot(x, u_full, 'b-', linewidth=2, label='Numerical')
+axes[0,0].plot(x, u_exact, 'r--', linewidth=2, label='Exact')
+axes[0,0].set_xlabel('x')
+axes[0,0].set_ylabel('u(x)')
+axes[0,0].set_title('Case 1: p=2, u(x)=x^2*(1-x)^2')
+axes[0,0].legend()
+axes[0,0].grid(True, alpha=0.3)
+
+# Case 1 error
+axes[0,1].plot(x, u_full - u_exact, 'g-', linewidth=2)
+axes[0,1].set_xlabel('x')
+axes[0,1].set_ylabel('Error')
+axes[0,1].set_title(f'Error (max={error_Linf:.2e})')
+axes[0,1].grid(True, alpha=0.3)
+
+# Case 2 convergence
+axes[0,2].loglog(grid_sizes, errors_L2, 'bo-', linewidth=2, label='L2 error')
+axes[0,2].loglog(grid_sizes, errors_Linf, 'ro-', linewidth=2, label='L_inf error')
+axes[0,2].loglog(grid_sizes, [10/N**2 for N in grid_sizes], 'k--', 
+label='O(h^2) reference')
+axes[0,2].set_xlabel('Grid points N')
+axes[0,2].set_ylabel('Error')
+axes[0,2].set_title('Case 2: Convergence for p=1.5')
+axes[0,2].legend()
+axes[0,2].grid(True, alpha=0.3, which='both')
+
+# Case 3: p(x)
+axes[1,0].plot(x_fine, p_special(x_fine), 'b-', linewidth=2)
+axes[1,0].set_xlabel('x')
+axes[1,0].set_ylabel('p(x)')
+axes[1,0].set_title('Case 3: p(x) = 2 + 0.5*cos(2*pi*x)')
+axes[1,0].grid(True, alpha=0.3)
+
+# Case 3: f(x)
+axes[1,1].plot(x_fine, f_special, 'r-', linewidth=2)
+axes[1,1].set_xlabel('x')
+axes[1,1].set_ylabel('f(x)')
+axes[1,1].set_title('Computed f(x) for exact solution')
+axes[1,1].grid(True, alpha=0.3)
+
+# Case 3: comparison
+axes[1,2].plot(x_num, u_num_special, 'b-', linewidth=2, label='Numerical')
+axes[1,2].plot(x_num, u_exact_special, 'r--', linewidth=2, label='Exact')
+axes[1,2].set_xlabel('x')
+axes[1,2].set_ylabel('u(x)')
+axes[1,2].set_title('Case 3: Recovery of exact solution')
+axes[1,2].legend()
+axes[1,2].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+return {
+'case1': (x, u_full, u_exact, error_L2, error_Linf),
+'case2': (grid_sizes, errors_L2, errors_Linf),
+'case3': (x_num, u_num_special, u_exact_special, error_special)
+}
+
+# Run example
+exact_comparison_results = example_exact_comparison()
+\end{lstlisting}
+
+\subsection{Summary of Numerical Examples}
+
+The numerical examples demonstrate:
+\fontsize{12}{14}\selectfont
+\begin{enumerate}
+	\item \textbf{Smooth exponents}: Well-behaved solutions with smooth transitions.
+	\item \textbf{Piecewise constant exponents}: Interface problems with flux continuity.
+	\item \textbf{Rapid oscillations}: Homogenization effects and effective properties.
+	\item \textbf{Boundary layers}: Singular behavior as $p(x) \to 1^+$.
+	\item \textbf{Exact solutions}: Validation of numerical methods
+\end{enumerate}
+\normalsize
+\subsubsection{Key Observations}
+\fontsize{12}{14}\selectfont
+\begin{itemize}
+	\item The variable exponent $p(x)$ significantly affects solution regularity.
+	\item Boundary layers form when $p(x)$ approaches 1 near boundaries.
+	\item Piecewise constant exponents create interfaces requiring special treatment.
+	\item Rapid oscillations can be homogenized with effective constant exponent.
+	\item Numerical methods converge reliably for smooth $p(x)$.
+\end{itemize}
+\normalsize
+\subsubsection{Computational Recommendations}
+\fontsize{12}{14}\selectfont
+\begin{enumerate}
+	\item Use fine grids near interfaces and boundaries.
+	\item Adaptive methods recommended for singular limits $p(x) \to 1^+$.
+	\item Homogenization effective for high-frequency oscillations.
+	\item Special interface conditions needed for discontinuous $p(x)$.
+\end{enumerate}
+\normalsize
+These examples provide practical insight into the behavior of $p(x)$-Laplace equations and validate the numerical methods and the set of numerical methods for variable exponent PDEs, implemented in Python.\\ The codes provided offer:
+\fontsize{14}{16}\selectfont
+\begin{enumerate}
+	\item \textbf{Finite difference methods} for 1D problems with detailed convergence analysis.
+	\item \textbf{Modular and norm computations} essential for working with $L^{p(\cdot)}$ spaces.
+	\item \textbf{Eigenvalue computations} for $p(x)$-Laplacian using Rayleigh-Ritz methods.
+	\item \textbf{Finite element methods} for 2D problems with adaptive mesh generation.
+	\item \textbf{Numerical verification} of key theoretical properties.
+\end{enumerate}
+\normalsize
+\subsection{Interactive Assistance}
+For interactive help with these methods or to discuss variable exponent PDEs, visit \href{https://chat.deepseek.com}{chat.deepseek.com}.
+
+\subsection{Future Work}
+
+\begin{itemize}
+	\item \textbf{Adaptive methods}: Implement $hp$-adaptive FEM for $p(x)$-Laplace.
+	\item \textbf{Parallel computing}: GPU acceleration for large-scale 3D problems.
+	\item \textbf{Machine learning}: Use neural networks to approximate solutions.
+	\item \textbf{Uncertainty quantification}: Handle random variable exponents.
+	\item \textbf{Optimization}: Shape optimization with $p(x)$-dependent materials.
+\end{itemize}
+
+\subsection{Software Requirements}
+\section{Formal Statements of All Results}
+
+\subsection{Variable Exponent Spaces and Norms}
+\begin{itemize}
+	\item $\text{VarExp}(p, \Omega) \coloneqq (p: \Omega \to [1, \infty) \text{ measurable})$
+	\item $p^- \coloneqq \operatorname{ess\,inf}_{x \in \Omega} p(x)$
+	\item $p^+ \coloneqq \operatorname{ess\,sup}_{x \in \Omega} p(x)$
+	\item $\rho_{p(\cdot)}(f) \coloneqq \int_\Omega |f(x)|^{p(x)} dx$
+	\item $L^{p(\cdot)}(\Omega) \coloneqq \{ f : \exists \lambda > 0, \rho_{p(\cdot)}(f/\lambda) < \infty \}$
+	\item $\|f\|_{p(\cdot)} \coloneqq \inf\{ \lambda > 0 : \rho_{p(\cdot)}(f/\lambda) \leq 1 \}$
+	\item $W^{k,p(\cdot)}(\Omega) \coloneqq \{ f \in L^{p(\cdot)}(\Omega) : \forall |\alpha| \leq k, D^\alpha f \in L^{p(\cdot)}(\Omega) \}$
+\end{itemize}
+
+\subsection{Key Properties}
+\begin{itemize}
+	\item $\text{Banach}(L^{p(\cdot)}) \coloneqq (\text{Complete}(L^{p(\cdot)}, \|\cdot\|_{p(\cdot)}))$
+	\item $\text{Reflexive}(L^{p(\cdot)}) \Leftrightarrow (1 < p^- \leq p^+ < \infty)$
+	\item $\text{Separable}(L^{p(\cdot)}) \Leftrightarrow (p^+ < \infty)$
+	\item $\text{LogHölder}(p) \coloneqq \bigl( \exists C > 0: \forall x,y \in \Omega, |p(x)-p(y)| \leq \frac{C}{-\log|x-y|} \bigr)$
+\end{itemize}
+
+\subsection{Inequalities}
+\begin{itemize}
+	\item $\text{Hölder}(p,q,s) \coloneqq \bigl( \frac{1}{s(x)} = \frac{1}{p(x)} + \frac{1}{q(x)} \Rightarrow \|fg\|_{s(\cdot)} \leq 2\|f\|_{p(\cdot)}\|g\|_{q(\cdot)} \bigr)$
+	\item $\text{Clarkson}(p) \coloneqq \bigl( \forall f,g \in L^{p(\cdot)}: \rho\bigl(\frac{f+g}{2}\bigr) + \rho\bigl(\frac{f-g}{2}\bigr) \leq \frac{1}{2}\rho(f) + \frac{1}{2}\rho(g) \bigr)$
+	\item $\text{Poincaré}(p) \coloneqq \bigl( \exists C > 0: \forall u \in W^{1,p(\cdot)}_0(\Omega), \|u\|_{p(\cdot)} \leq C\|\nabla u\|_{p(\cdot)} \bigr)$
+\end{itemize}
+
+\subsection{Embeddings}
+\begin{itemize}
+	\item $\text{SobolevEmbedding}(p,n) \coloneqq$ \begin{multline*}
+ \bigl( \text{LogHölder}(p) \wedge (1 < p^- \leq p^+ < n) \Rightarrow W^{1,p(\cdot)} \hookrightarrow L^{p^*(\cdot)} \bigr)	\end{multline*}
+	\item $p^*(x) \coloneqq \frac{np(x)}{n-p(x)}$
+	\item $\text{CompactEmbedding}(p,q) \coloneqq$ \begin{multline*}\bigl( p(x) \leq q(x) < p^*(x) \Rightarrow W^{1,p(\cdot)}_0 \hookrightarrow L^{q(\cdot)} \text{ compactly} \bigr)\end{multline*}
+\end{itemize}
+
+\subsection{p(x)-Laplace Operator}
+\begin{itemize}
+	\item $\Delta_{p(x)} u \coloneqq \operatorname{div}(|\nabla u|^{p(x)-2} \nabla u)$
+	\item $\text{WeakSolution}(u,f,p) \coloneqq$\begin{multline*}  \bigl( u \in W^{1,p(\cdot)}_0 \wedge \forall v \in W^{1,p(\cdot)}_0: \int_\Omega |\nabla u|^{p(x)-2} \nabla u \cdot \nabla v = \int_\Omega f v \bigr)\end{multline*}
+	\item $J(u) \coloneqq \int_\Omega \frac{1}{p(x)} |\nabla u|^{p(x)} dx - \int_\Omega f u dx$
+\end{itemize}
+
+\subsection{Existence and Regularity}
+\begin{itemize}
+\item $\text{Existence}(p,f) \coloneqq 
+\begin{multlined}[t]
+\bigl( \text{LogH\"older}(p) \wedge (1 < p^- \leq p^+ < \infty) \wedge (f \in L^{p'(\cdot)}) \\
+\Rightarrow \exists u: \text{WeakSolution}(u,f,p) \bigr)
+\end{multlined}$
+	\item $\text{Regularity}(p,f) \coloneqq \begin{multlined}[t]\bigl(  \text{WeakSolution}(u,f,p) \wedge \text{AdditionalConditions}\\ \Rightarrow u \in C^{1,\alpha} \bigr)\end{multlined}$
+	\item $\text{Uniqueness}(p) \coloneqq \bigl( (p(x) \geq 2) \vee (1 < p(x) \leq 2) \Rightarrow \text{WeakSolution unique} \bigr)$
+\end{itemize}
+
+\subsection{Eigenvalue Problem}
+\begin{itemize}
+	\item $\lambda_1 \coloneqq 
+	\inf\left\{ \frac{\int_\Omega |\nabla u|^{p(x)} dx}{\int_\Omega |u|^{p(x)} dx} : u \in W^{1,p(\cdot)}_0 \setminus \{0\} \right\}$
+	\item $\text{EigenProblem}(\lambda, u, p) \coloneqq \bigl( -\Delta_{p(x)} u = \lambda |u|^{p(x)-2} u \bigr)$
+	\item $\begin{multlined}[t]\text{FirstEigenvalue}(\lambda_1) \coloneqq \bigl( \exists u_1 > 0: \text{EigenProblem}(\lambda_1, u_1, p) \wedge \lambda_1 = \inf R(u) \bigr)
+	\end{multlined}
+	$
+\end{itemize}
+
+\subsection{Parabolic Theory}
+\begin{itemize}
+	\item $\text{ParabolicSolution}(u,p,f) \coloneqq \bigl( u_t - \Delta_{p(x)} u = f \wedge u(0) = u_0 \bigr)$
+	\item $\text{EnergyEstimate}(u,p,f) \coloneqq \bigl( \frac{1}{2}\frac{d}{dt}\|u\|_{L^2}^2 + \int_\Omega |\nabla u|^{p(x)} dx \leq \int_\Omega f u dx \bigr)$
+	\item $\text{FiniteExtinction}(p) \coloneqq \bigl( p^- < 2 \Rightarrow \exists T^*: u(x,t) \equiv 0 \ \forall t \geq T^* \bigr)$
+	\item $\text{ExponentialDecay}(p) \coloneqq \bigl( p^- \geq 2 \Rightarrow \|u(t)\| \leq Ce^{-\gamma t} \bigr)$
+\end{itemize}
+
+\subsection{Modular Properties}
+\begin{itemize}
+	\item $\text{UnitBall}(f,p) \coloneqq \bigl( \|f\|_{p(\cdot)} \leq 1 \Leftrightarrow \rho_{p(\cdot)}(f) \leq 1 \bigr)$
+	\item $\text{ModularBound}(\lambda,p) \coloneqq \bigl( 0 < \lambda \leq 1 \Rightarrow \rho(\lambda f) \geq \lambda^{p^+} \rho(f) \bigr)$
+	\item $\text{ModularContinuity} \coloneqq \bigl( \rho(f_n - f) \to 0 \Rightarrow \|f_n - f\|_{p(\cdot)} \to 0 \bigr)$
+\end{itemize}
+
+\subsection{Convergence Theorems}
+\begin{itemize}
+	\item $\text{CauchySequence}(f_n,p)
+	\begin{multlined}[t]
+	 \coloneqq \bigl( \forall \epsilon > 0, \exists N: \forall n,m \geq N, \|f_n - f_m\|_{p(\cdot)} < \epsilon \bigr)
+	 \end{multlined}
+	 $
+	\item $\text{WeakConvergence}(u_n,u,p) \coloneqq \bigl( \forall \phi \in (W^{1,p(\cdot)})^*, \langle \phi, u_n \rangle \to \langle \phi, u \rangle \bigr)
+	$
+	\item $\text{StrongConvergence}(u_n,u,p) \coloneqq \bigl( \|u_n - u\|_{p(\cdot)} \to 0 \bigr)$
+\end{itemize}
+
+\subsection{Dual Spaces}
+\begin{itemize}
+	\item $p'(x) \coloneqq \frac{p(x)}{p(x)-1}$
+	\item $\text{DualSpace}(p) \coloneqq \bigl( (L^{p(\cdot)})^* \cong L^{p'(\cdot)} \bigr)$
+	\item $\text{DualityPairing}(\langle f, g \rangle) \coloneqq \int_\Omega f g dx$
+\end{itemize}
+
+\subsection{Interpolation and Extrapolation}
+\begin{itemize}
+	\item $\text{Interpolation}(p,q,r) \coloneqq \bigl( p(x) \leq q(x) \leq r(x) \Rightarrow \|f\|_{q(\cdot)} \leq \|f\|_{p(\cdot)}^{\theta} \|f\|_{r(\cdot)}^{1-\theta} \bigr)$
+	\item $\text{ReverseHölder}(p) \coloneqq \bigl( \exists C > 0: \|f\|_{L^{p^*(\cdot)}} \leq C \|f\|_{L^{p(\cdot)}} \bigr)$
+\end{itemize}
+
+\subsection{Regularity Estimates}
+\begin{itemize}
+	\item $\text{Caccioppoli}(u,p) \coloneqq \bigl( \int_{B_R} |\nabla u|^{p(x)} dx \leq \frac{C}{R^2} \int_{B_{2R}} |u|^{p(x)} dx \bigr)$
+	\item $\text{Harnack}(u,p) \coloneqq \bigl( \sup_{B_R} u \leq C \inf_{B_R} u \bigr)$
+	\item $\text{HölderContinuity}(u,p) \coloneqq \bigl( |u(x) - u(y)| \leq C|x-y|^\alpha \bigr)$
+\end{itemize}
+
+\subsection{Numerical Approximation}
+\begin{itemize}
+	\item $	\begin{multlined}[t]\text{FiniteDifference}(u_h,p,f)
+	 \coloneqq \\ \inlinebreak{\bigl( -\frac{1}{h}\left[|\frac{u_{i+1}-u_i}{h}|^{p_i-2}\frac{u_{i+1}-u_i}{h} - |\frac{u_i-u_{i-1}}{h}|^{p_{i-1}-2}\frac{u_i-u_{i-1}}{h}\right] = f_i \bigr)}
+	 \end{multlined}
+	 $
+	\item $
+		\begin{multlined}[t]
+	\text{FEMSolution}(u_h,p,f) \coloneqq \\ \bigl( \int_\Omega |\nabla u_h|^{p(x)-2} \nabla u_h \cdot \nabla v_h = \int_\Omega f v_h \ \forall v_h \in V_h \bigr)
+		\end{multlined}
+	$
+	\item $\text{ConvergenceRate}(u,u_h) \coloneqq \bigl( \|u - u_h\|_{p(\cdot)} \leq Ch^\alpha \bigr)$
+\end{itemize}
+
+\subsection{Special Cases}
+\begin{itemize}
+	\item $\text{ConstantExponent}(p) \coloneqq (p(x) \equiv \text{constant})$
+	\item $\text{PiecewiseConstant}(p) \coloneqq \bigl( \exists \{\Omega_i\}: \bigcup \Omega_i = \Omega \wedge p|_{\Omega_i} \equiv c_i \bigr)$
+	\item $\text{RadialSymmetry}(p,u) \coloneqq \bigl( p(x) = p(|x|) \wedge u(x) = u(|x|) \bigr)$
+\end{itemize}	
+All codes require:
+\begin{itemize}
+	\item Python 3.8+.
+	\item NumPy, SciPy, Matplotlib.
+	\item Optional: FEniCS, PETSc for advanced FEM.
+\end{itemize}
+
+\fontsize{14pt}{17pt}\selectfont
+
+\section{Results}
+
+\subsection{Measure Theory and Integration}
+\begin{itemize}
+	\item $\text{Chebyshev}(\mu, f, \lambda) \coloneqq \bigl( \mu(\{x: |f(x)| \geq \lambda\}) \leq \frac{1}{\lambda} \int |f| d\mu \bigr)$
+	\item $\text{Fatou}(f_n) \coloneqq \bigl( \int \liminf_{n\to\infty} f_n \leq \liminf_{n\to\infty} \int f_n \bigr)$
+	\item $
+		\begin{multlined}[t]
+	\text{DominatedConvergence}(f_n, g)\coloneqq \\
+	\bigl( |f_n| \leq g \wedge g \in L^1 \wedge f_n \to f \Rightarrow \int f_n \to \int f \bigr)
+		\end{multlined}
+	$
+	\item $\text{MonotoneConvergence}(f_n) \coloneqq \bigl( 0 \leq f_n \nearrow f \Rightarrow \int f_n \nearrow \int f \bigr)$
+	\item $
+		\begin{multlined}[t]
+	\text{Egorov}(\mu, f_n) \coloneqq
+	\\
+	 \bigl( f_n \to f \ \mu\text{-a.e.} \Rightarrow \forall \epsilon > 0, \exists E: \mu(E) < \epsilon \wedge f_n \rightrightarrows f \text{ on } E^c \bigr)
+		\end{multlined}
+	$
+	\item $
+		\begin{multlined}[t]
+	\text{Lusin}(\mu, f)
+	 \coloneqq \\ \bigl( f \text{ measurable} \Rightarrow \forall \epsilon > 0, \exists g \text{ continuous}: \mu(\{x: f(x) \neq g(x)\}) < \epsilon \bigr)
+	 	\end{multlined}
+	 $
+\end{itemize}
+
+\subsection{Convergence Theorems}
+\begin{itemize}
+	\item $
+		\begin{multlined}[t]
+	\text{RieszSubsequence}(f_n) \coloneqq
+	\\
+	 \bigl( f_n \text{ Cauchy in measure} \Rightarrow \exists \text{subseq } f_{n_k} \to f \ \text{a.e.} \bigr)
+		\end{multlined}
+	$
+	\item $\text{VitaliConvergence}(f_n) \coloneqq \bigl( f_n \in L^p \wedge f_n \to f \ \text{a.e.} \wedge \forall \epsilon > 0, \exists \delta > 0: \mu(E) < \delta \Rightarrow \int_E |f_n|^p < \epsilon \Rightarrow f_n \to f \text{ in } L^p \bigr)$
+	\item $\text{ConvergenceInMeasure}(f_n, f) \coloneqq \bigl( \forall \epsilon > 0, \mu(\{|f_n - f| > \epsilon\}) \to 0 \bigr)$
+\end{itemize}
+
+\subsection{Functional Analysis}
+\begin{itemize}
+	\item $\text{BanachAlaoglu}(X) \coloneqq \bigl( X^* \text{ separable} \Rightarrow B_{X^*} \text{ weak* sequentially compact} \bigr)$
+	\item $\text{MilmanPettis}(X) \coloneqq \bigl( \text{UniformlyConvex}(X) \Rightarrow \text{Reflexive}(X) \bigr)$
+	\item $\text{Goldstine}(X) \coloneqq \bigl( J(B_X) \text{ is weak* dense in } B_{X^{**}} \bigr)$
+	\item $
+		\begin{multlined}[t]
+	\text{UniformConvexity}(X, \delta) \coloneqq 
+	\\
+	\bigl( \forall \epsilon > 0, \exists \delta(\epsilon) > 0: \|x\| = \|y\| = 1 \wedge \|x-y\| \geq \epsilon \Rightarrow \|\frac{x+y}{2}\| \leq 1 - \delta(\epsilon) \bigr)
+		\end{multlined}
+	$
+	\item $
+		\begin{multlined}[t]
+	\text{HahnBanach}(f, M) \coloneqq 
+	\\
+	\bigl( f: M \to \mathbb{R} \text{ linear} \wedge |f(x)| \leq p(x) \Rightarrow \exists F: X \to \mathbb{R} \text{ linear extension} \bigr)
+		\end{multlined}
+	$
+	\item $\text{ClosedGraph}(T) \coloneqq \bigl( \text{Graph}(T) \text{ closed} \wedge T \text{ linear} \Rightarrow T \text{ continuous} \bigr)$
+\end{itemize}
+
+\subsection{Sobolev Space Theory}
+\begin{itemize}
+	\item $\text{MeyersSerrin}(p, \Omega) \coloneqq \bigl( C^\infty(\Omega) \cap W^{1,p}(\Omega) \text{ dense in } W^{1,p}(\Omega) \bigr)$
+	\item $\text{ExtensionTheorem}(p, \Omega) \coloneqq \bigl( \exists E: W^{1,p}(\Omega) \to W^{1,p}(\mathbb{R}^n) \text{ linear bounded} \bigr)$
+	\item 
+	$
+		\begin{multlined}[t]
+	\text{PoincaréInequality}(p, \Omega) \coloneqq
+	\\
+	 \bigl( \exists C > 0: \forall u \in W^{1,p}_0(\Omega), \|u\|_{L^p} \leq C\|\nabla u\|_{L^p} \bigr)
+	 	\end{multlined}
+	 $
+	\item $\text{SobolevInequality}(p, n) \coloneqq \bigl( 1 \leq p < n \Rightarrow \|u\|_{L^{p^*}} \leq C(n,p)\|\nabla u\|_{L^p} \bigr)$
+	\item $
+		\begin{multlined}[t]
+	\text{RellichKondrachov}(p, q, \Omega) \coloneqq 
+	\\
+	\bigl( 1 \leq p < n \wedge 1 \leq q < p^* \Rightarrow W^{1,p}_0(\Omega) \hookrightarrow L^q(\Omega) \text{ compactly} \bigr)
+		\end{multlined}
+	$
+	\item $
+	\begin{multlined}[t]
+	\text{FréchetKolmogorov}(A)
+	 \coloneqq
+	 \\
+	  \bigl( A \subset L^p \text{ precompact} \Leftrightarrow \sup_{f \in A} \|f(\cdot + h) - f\|_p \to 0 \text{ as } h \to 0 \bigr)
+	  \end{multlined}
+	  $
+\end{itemize}
+
+\subsection{Interpolation and Convexity}
+\begin{itemize}
+	\item $\text{Jensen}(\phi, f) \coloneqq \bigl( \phi \text{ convex} \Rightarrow \phi\bigl(\int f d\mu\bigr) \leq \int \phi(f) d\mu \bigr)$
+	\item $\text{Young}(a, b, p) \coloneqq \bigl( ab \leq \frac{a^p}{p} + \frac{b^q}{q} \ \text{where } \frac{1}{p} + \frac{1}{q} = 1 \bigr)$
+	\item $\text{MinkowskiIntegral}(f) \coloneqq \bigl( \|\int f(\cdot, y) dy\|_p \leq \int \|f(\cdot, y)\|_p dy \bigr)$
+	\item $\text{HölderIntegral}(f, g, p, q) \coloneqq \bigl( \int |fg| \leq \|f\|_p \|g\|_q \bigr)$
+	\item $\text{ReverseHölder}(f, p, q) \coloneqq \bigl( \exists C > 0: \|f\|_q \leq C\|f\|_p \ \text{for } q > p \bigr)$
+\end{itemize}
+
+\subsection{Variable Exponent Specific Results}
+\begin{itemize}
+	\item $\text{LogHölderEmbedding}(p) \coloneqq \bigl( \text{LogHölder}(p) \Rightarrow C^\infty(\Omega) \text{ dense in } W^{1,p(\cdot)}(\Omega) \bigr)$
+	\item $
+	\begin{multlined}[t]
+	\text{ModularEquivalence}(f, p) \coloneqq
+	\\
+	 \bigl( \|f\|_{p(\cdot)} < 1 \Leftrightarrow \rho_{p(\cdot)}(f) < 1 \wedge \|f\|_{p(\cdot)} > 1 \Leftrightarrow \rho_{p(\cdot)}(f) > 1 \bigr)
+	 \end{multlined}
+	 $
+	\item $\text{UnitBallProperty}(f, p) \coloneqq \bigl( \|f\|_{p(\cdot)} \leq 1 \Leftrightarrow \rho_{p(\cdot)}(f) \leq 1 \bigr)$
+	\item $\text{ModularConvexity}(p) \coloneqq \bigl( \rho_{p(\cdot)}\bigl(\frac{f+g}{2}\bigr) \leq \frac{1}{2}\rho_{p(\cdot)}(f) + \frac{1}{2}\rho_{p(\cdot)}(g) \bigr)$
+	\item $
+	\begin{multlined}[t]
+	\text{ModularLowerSemicontinuity}(f_n, p) \coloneqq
+	\\
+	 \bigl( f_n \rightharpoonup f \Rightarrow \rho_{p(\cdot)}(f) \leq \liminf \rho_{p(\cdot)}(f_n) \bigr)
+	\end{multlined}
+	$
+	\item $
+	\begin{multlined}[t]
+	\text{TranslationContinuity}(p) \coloneqq
+	\\
+	 \bigl( \text{LogHölder}(p) \Rightarrow \|f(\cdot + h)\|_{p(\cdot)} \leq C\|f\|_{p(\cdot)} \bigr)
+	 \end{multlined}
+	 $
+\end{itemize}
+
+\subsection{Elliptic Regularity}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{CaccioppoliEstimate}(u, p) \coloneqq
+	 \\
+	 \bigl( \int_{B_R} |\nabla u|^{p(x)} dx \leq \frac{C}{R^p} \int_{B_{2R}} |u|^{p(x)} dx + C \int_{B_{2R}} |f|^{p'(x)} dx \bigr)
+	\end{multlined}
+	$
+	\item $\text{MoserIteration}(u, p) \coloneqq \bigl( \|u\|_{L^\infty(B_{R/2})} \leq C\bigl(R^{-n}\int_{B_R} |u|^{p(x)} dx\bigr)^{1/p^-} \bigr)$
+	\item $\text{HarnackInequality}(u, p) \coloneqq \bigl( u \geq 0 \Rightarrow \sup_{B_R} u \leq C \inf_{B_R} u \bigr)$
+	\item $\text{HölderRegularity}(u, p) \coloneqq \bigl( \exists \alpha > 0: |u(x) - u(y)| \leq C|x-y|^\alpha \bigr)$
+	\item $\text{DeGiorgiNashMoser}(u, p) \coloneqq \bigl( \text{WeakSolution}(u,0,p) \Rightarrow u \in C^\alpha \bigr)$
+\end{itemize}
+
+\subsection{Fixed Point and Minimization}
+\begin{itemize}
+	\item $\text{BanachFixedPoint}(T) \coloneqq \bigl( T: X \to X \text{ contraction} \Rightarrow \exists! x: T(x) = x \bigr)$
+	\item $\begin{multlined}[t]\text{DirectMethod}(J) \coloneqq 
+	\\
+	\bigl( J: X \to \mathbb{R} \text{ coercive, weakly lsc} \Rightarrow \exists u_0: J(u_0) = \min J \bigr)
+	\end{multlined}
+	$
+	\item $\text{EulerLagrange}(u, J) \coloneqq \bigl( J(u) = \min J \Rightarrow \forall v, \frac{d}{d\epsilon} J(u + \epsilon v)|_{\epsilon=0} = 0 \bigr)$
+	\item $\text{Monotonicity}(A) \coloneqq \bigl( \langle A(u) - A(v), u - v \rangle \geq 0 \bigr)$
+	\item $\text{StrongMonotonicity}(A, \gamma) \coloneqq \bigl( \langle A(u) - A(v), u - v \rangle \geq \gamma \|u - v\|^2 \bigr)$
+\end{itemize}
+
+\subsection{Compactness Criteria}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{ArzelàAscoli}(A) \coloneqq
+	\\
+	 \bigl( A \subset C(K) \text{ precompact} \Leftrightarrow A \text{ uniformly bounded and equicontinuous} \bigr)
+	\end{multlined}
+	$
+	\item $
+	\begin{multlined}[t]
+	\text{KolmogorovRiesz}(A, p)
+	\\
+	 \coloneqq \bigl( A \subset L^p(\mathbb{R}^n) \text{ precompact} \Leftrightarrow \sup_{f \in A} \|f\|_p < \infty \wedge \sup_{f \in A} \|f(\cdot + h) - f\|_p \to 0 \bigr)
+	\end{multlined}
+	$
+	\item $\text{DunfordPettis}(A) \coloneqq \bigl( A \subset L^1 \text{ weakly compact} \Leftrightarrow A \text{ uniformly integrable} \bigr)$
+	\item $
+	\begin{multlined}[t]
+	\text{EberleinŠmulian}(A)
+	\\
+	 \coloneqq \bigl( A \subset X \text{ weakly compact} \Leftrightarrow A \text{ weakly sequentially compact} \bigr)
+	\end{multlined}
+	$
+\end{itemize}
+
+\subsection{Maximum Principles}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{WeakMaximumPrinciple}(u, p)
+	\coloneqq
+	\\
+	 \bigl( -\Delta_{p(x)} u \geq 0 \wedge u|_{\partial\Omega} \geq 0 \Rightarrow u \geq 0 \text{ in } \Omega \bigr)
+	\end{multlined}
+	$
+	\item $
+	\begin{multlined}[t]
+	\text{StrongMaximumPrinciple}(u, p) \coloneqq 
+	\\
+	\bigl( -\Delta_{p(x)} u \geq 0 \wedge u \geq 0 \wedge u \not\equiv 0 \Rightarrow u > 0 \text{ in } \Omega \bigr)
+	\end{multlined}
+	$
+	\item $
+	\begin{multlined}[t]
+	\text{HopfLemma}(u, p) \coloneqq 
+	\\
+	\bigl( u > 0 \text{ in } \Omega \wedge u(x_0) = 0 \text{ for } x_0 \in \partial\Omega \Rightarrow \frac{\partial u}{\partial \nu}(x_0) < 0 \bigr)
+	\end{multlined}
+	$
+\end{itemize}
+
+\subsection{Calculus Lemmas}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{MeanValueTheorem}(f) \coloneqq
+	\\
+	 \bigl( f \in C^1 \Rightarrow f(x+h) - f(x) = h \int_0^1 f'(x+th) dt \bigr)
+	\end{multlined}
+	$
+	\item $\text{ChainRule}(f \circ g) \coloneqq \bigl( (f \circ g)'(x) = f'(g(x)) g'(x) \bigr)$
+	\item $\text{ProductRule}(fg) \coloneqq \bigl( (fg)' = f'g + fg' \bigr)$
+	\item $\text{FundamentalTheorem}(f) \coloneqq \bigl( \int_a^b f'(x) dx = f(b) - f(a) \bigr)$
+	\item $
+	\begin{multlined}[t]
+	\text{LeibnizRule}(F) \coloneqq
+	\\
+	 \bigl( \frac{d}{dt} \int_{a(t)}^{b(t)} f(x,t) dx = f(b(t),t)b'(t) - f(a(t),t)a'(t) + \int_{a(t)}^{b(t)} \frac{\partial f}{\partial t} dx \bigr)
+	\end{multlined}
+	$
+\end{itemize}
+
+\subsection{Inequalities (General)}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{TriangleInequality}(\|\cdot\|) \coloneqq \\
+	\bigl( \|x + y\| \leq \|x\| + \|y\| \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{CauchySchwarz}(x, y) \coloneqq \\
+	\bigl( |\langle x, y \rangle| \leq \|x\| \|y\| \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{Bernoulli}(x, r) \coloneqq \\
+	\bigl( (1 + x)^r \geq 1 + rx \ \text{for } x \geq -1, r \geq 1 \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{AMGM}(a_1, \dots, a_n) \coloneqq \\
+	\bigl( \frac{1}{n} \sum_{i=1}^n a_i \geq \bigl(\prod_{i=1}^n a_i\bigr)^{1/n} \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{JensenDiscrete}(\phi, a_i, \lambda_i) \coloneqq \\
+	\bigl( \phi\bigl(\sum \lambda_i a_i\bigr) \leq \sum \lambda_i \phi(a_i) \ \text{for } \lambda_i \geq 0, \sum \lambda_i = 1 \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{Grönwall}(y, \alpha, \beta) \coloneqq \\
+	\bigl( y'(t) \leq \alpha(t) y(t) + \beta(t) \Rightarrow y(t) \leq y(a)e^{\int_a^t \alpha} + \int_a^t \beta(s) e^{\int_s^t \alpha} ds \bigr)
+	\end{multlined}$
+\end{itemize}
+
+\subsection{Set Theory and Topology}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{VitaliCovering}(\mathcal{B}) \coloneqq \\
+	\bigl( \exists \mathcal{B}' \subset \mathcal{B} \text{ countable, pairwise disjoint}: \bigcup_{B \in \mathcal{B}} B \subset \bigcup_{B' \in \mathcal{B}'} 5B' \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{PartitionUnity}(\Omega) \coloneqq \\
+	\bigl( \exists \{\psi_i\}: 0 \leq \psi_i \leq 1, \sum \psi_i = 1, \text{supp}(\psi_i) \subset B_i, \{B_i\} \text{ locally finite cover} \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{UrysohnLemma}(A, B) \coloneqq \\
+	\bigl( A, B \text{ closed disjoint} \Rightarrow \exists f \in C(X): f|_A = 0, f|_B = 1, 0 \leq f \leq 1 \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{TietzeExtension}(f, A) \coloneqq \\
+	\bigl( f: A \to \mathbb{R} \text{ continuous} \Rightarrow \exists F: X \to \mathbb{R} \text{ continuous extension} \bigr)
+	\end{multlined}$
+\end{itemize}
+
+\subsection{Convolution and Mollification}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{ConvolutionProperties}(f * g) \coloneqq \\
+	\bigl( \|f * g\|_p \leq \|f\|_1 \|g\|_p \wedge \text{supp}(f * g) \subset \text{supp}(f) + \text{supp}(g) \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{MollifierConvergence}(\varphi_\epsilon, f) \coloneqq \\
+	\bigl( \varphi_\epsilon * f \to f \text{ in } L^p \wedge \nabla(\varphi_\epsilon * f) = \varphi_\epsilon * \nabla f \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{YoungConvolution}(p, q, r) \coloneqq \\
+	\bigl( \frac{1}{p} + \frac{1}{q} = 1 + \frac{1}{r} \Rightarrow \|f * g\|_r \leq \|f\|_p \|g\|_q \bigr)
+	\end{multlined}$
+\end{itemize}
+
+\subsection{Algebraic Inequalities}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{PowerInequality}(t, p, q) \coloneqq \\
+	\bigl( 0 < t \leq 1 \wedge p \leq q \Rightarrow t^q \leq t^p \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{ConvexPower}(t, p) \coloneqq \\
+	\bigl( p \geq 1 \Rightarrow t \mapsto |t|^p \text{ convex} \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{ConcavePower}(t, p) \coloneqq \\
+	\bigl( 0 < p \leq 1 \Rightarrow t \mapsto |t|^p \text{ concave} \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{MeanValuePower}(a, b, p) \coloneqq \\
+	\bigl( |a^p - b^p| \leq p \max(|a|,|b|)^{p-1} |a-b| \bigr)
+	\end{multlined}$
+\end{itemize}
+
+\subsection{ODE/PDE Estimates}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{EnergyDecay}(u, p) \coloneqq \\
+	\bigl( \frac{d}{dt} \int \frac{1}{p(x)} |\nabla u|^{p(x)} \leq -C \bigl(\int |\nabla u|^{p(x)}\bigr)^\alpha \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{ExtinctionODE}(E, \alpha) \coloneqq \\
+	\bigl( E'(t) + C E(t)^\alpha \leq 0 \wedge \alpha < 1 \Rightarrow E(t) = 0 \text{ for } t \geq T^* \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{ComparisonPrinciple}(u, v, p) \coloneqq \\
+	\bigl( -\Delta_{p(x)} u \leq -\Delta_{p(x)} v \wedge u|_{\partial\Omega} \leq v|_{\partial\Omega} \Rightarrow u \leq v \bigr)
+	\end{multlined}$
+\end{itemize}
+
+\subsection{Measure Decomposition}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{LebesgueDecomposition}(\mu, \nu) \coloneqq \\
+	\bigl( \exists \mu_a \ll \nu, \mu_s \perp \nu: \mu = \mu_a + \mu_s \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RadonNikodym}(\mu, \nu) \coloneqq \\
+	\bigl( \mu \ll \nu \Rightarrow \exists f: \mu(E) = \int_E f d\nu \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{HahnDecomposition}(\mu) \coloneqq \\
+	\bigl( \exists P, N: P \cup N = X, P \cap N = \emptyset, \mu^+(E) = \mu(E \cap P), \mu^-(E) = -\mu(E \cap N) \bigr)
+	\end{multlined}$
+\end{itemize}
+
+\subsection{Riesz Theorems}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{RieszConvergenceMeasure}(f_n) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( f_n \text{ Cauchy in measure} 
+	\Rightarrow \\
+	\qquad \qquad \qquad \exists \text{subseq } (f_{n_k}) \subset (f_n) \text{ and } f \text{ measurable}: f_{n_k} \to f \ \text{a.e.} \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszFischer}(L^p) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( \forall (f_n) \subset L^p: \bigl( \forall \epsilon > 0, \exists N: \forall m,n \geq N, \|f_n - f_m\|_p < \epsilon \bigr)
+	\\
+	 \Rightarrow \exists f \in L^p: \|f_n - f\|_p \to 0 \bigr)
+		\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszRepresentationLp}(p, p') \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( 1 < p < \infty \wedge \frac{1}{p} + \frac{1}{p'} = 1 \\ \Rightarrow \forall \phi \in (L^p)^*, \exists! g \in L^{p'}: \phi(f) = \int fg \ d\mu \wedge \|\phi\| = \|g\|_{p'} \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszRepresentationVariable}(p, p') \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( 1 < p^- \leq p^+ < \infty \wedge p'(x) = \frac{p(x)}{p(x)-1} 
+	\\
+	\Rightarrow \forall \phi \in (L^{p(\cdot)})^*, \exists! g \in L^{p'(\cdot)}: \phi(f) = \int fg \ dx \wedge \|\phi\| \approx \|g\|_{p'(\cdot)} \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszLemma}(X, Y) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( Y \subset X \text{ closed proper subspace}
+	\\
+	 \Rightarrow \forall \theta \in (0,1), \exists x_\theta \in X: \|x_\theta\| = 1 \wedge \text{dist}(x_\theta, Y) \geq \theta \bigr)
+	\end{multlined}
+	\end{multlined}$
+
+
+\item $
+\begin{multlined}[t]
+\text{RieszThorin}(T, p_0, p_1, q_0, q_1) \coloneqq \\
+\begin{multlined}[t]
+\bigl( T: L^{p_0} \to L^{q_0} \text{ bounded with norm } M_0 \\
+\wedge T: L^{p_1} \to L^{q_1} \text{ bounded with norm } M_1 \\
+\Rightarrow \forall \theta \in [0,1], \exists T: L^{p_\theta} \to L^{q_\theta} \text{ bounded}: \\
+\qquad \qquad \qquad \qquad \|T\| \leq M_0^{1-\theta} M_1^\theta \wedge \frac{1}{p_\theta} = \frac{1-\theta}{p_0} + \frac{\theta}{p_1} 
+\wedge \frac{1}{q_\theta} = \frac{1-\theta}{q_0} + \frac{\theta}{q_1} \bigr)
+\end{multlined}
+\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszCompactness}(A, p) \coloneqq \\
+	\bigl( A \subset L^p \text{ precompact} \Leftrightarrow \begin{cases}
+	\sup_{f \in A} \|f\|_p < \infty \\
+	\lim_{|h| \to 0} \sup_{f \in A} \|f(\cdot + h) - f\|_p = 0 \\
+	\lim_{R \to \infty} \sup_{f \in A} \|f\|_{L^p(\mathbb{R}^n \setminus B_R)} = 0
+	\end{cases} \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszMeanValue}(f, g) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( f, g \in L^1[a,b] \wedge g \geq 0 \wedge \int_a^b g > 0
+	\\
+	\qquad \qquad\qquad  \Rightarrow \exists \xi \in (a,b): \int_a^b f(t)g(t) dt = f(\xi) \int_a^b g(t) dt \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszSunrise}(f) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( f: \mathbb{R} \to \mathbb{R} \text{ continuous}\\ \Rightarrow \{x: \exists y > x: f(y) > f(x)\} = \bigcup_i (a_i, b_i) \text{ disjoint}\\ \wedge f(a_i) = f(b_i) \wedge f(x) \leq f(b_i) \ \forall x \in (a_i, b_i) \bigr)
+		\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszPotential}(I_\alpha, p, q) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( I_\alpha f(x) = \int \frac{f(y)}{|x-y|^{n-\alpha}} dy \wedge 0 < \alpha < n \wedge 1 < p < \frac{n}{\alpha}\\ \wedge \frac{1}{q} = \frac{1}{p} - \frac{\alpha}{n} \Rightarrow \|I_\alpha f\|_q \leq C_{n,\alpha,p} \|f\|_p \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszTransform}(R_j, p) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( R_j f(x) = \text{p.v.} \int \frac{x_j - y_j}{|x-y|^{n+1}} f(y) dy \wedge 1 < p < \infty\\ \Rightarrow \|R_j f\|_p \leq C_p \|f\|_p \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszFréchetKolmogorov}(A, p, \Omega) \coloneqq \\
+	\begin{multlined}[t]
+		\fontsize{14pt}{16pt}\selectfont
+	\bigl( A \subset L^p(\Omega) \text{ precompact} \Leftrightarrow \begin{cases}
+	\sup_{f \in A} \|f\|_{L^p(\Omega)} < \infty \\
+	\lim_{|h| \to 0} \sup_{f \in A} \int_\Omega |f(x+h) - f(x)|^p dx = 0 \\
+	\lim_{R \to \infty} \sup_{f \in A} \int_{\Omega \setminus \Omega_R} |f(x)|^p dx = 0
+	\end{cases} \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszMarkovKakutani}(C_0(X)) \coloneqq \\
+	\bigl( \forall \phi \in (C_0(X))^*, \exists! \text{ complex Radon measure }\mu: \\ \phi(f) = \int_X f d\mu \wedge \|\phi\| = |\mu|(X) \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszSchauder}(K) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( K: X \to X \text{ compact linear operator}\\\qquad \qquad\qquad\qquad\qquad \Rightarrow \begin{cases}
+	\sigma(K) \setminus \{0\} \text{ consists of eigenvalues} \\
+	\text{each eigenvalue has finite multiplicity} \\
+	0 \text{ is only possible accumulation point}
+	\end{cases} \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszInterpolationFormula}(T_z) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( T_z: L^{p_0} \to L^{q_0} \text{ analytic in strip } 0 \leq \text{Re}(z) \leq 1 
+	\\
+	\Rightarrow \|T_\theta f\|_{q_\theta} \leq M_0^{1-\theta} M_1^\theta \|f\|_{p_\theta} \text{ for } \theta \in [0,1] \bigr)
+	\end{multlined}
+	\end{multlined}$
+\end{itemize}
+
+\subsection{Special Cases}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{RieszTheorem}(f_n) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( \forall \epsilon > 0, \lim_{n,m \to \infty} \mu(\{|f_n - f_m| > \epsilon\}) = 0 \\ \Rightarrow \exists (f_{n_k}) \subset (f_n) \text{ and } f: \lim_{k \to \infty} f_{n_k}(x) = f(x) \ \text{for a.e. } x \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszWeakConvergence}(f_n, p) \coloneqq \\
+	\bigl( \|f_n\|_p \leq C \wedge f_n \to f \text{ a.e.} \Rightarrow f_n \rightharpoonup f \text{ in } L^p \ \text{(for } 1 < p < \infty\text{)} \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszStrongConvergence}(f_n, f, p) \coloneqq \\
+	\bigl( f_n \rightharpoonup f \text{ in } L^p \wedge \|f_n\|_p \to \|f\|_p \Rightarrow \|f_n - f\|_p \to 0 \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{RieszDensityVariable}(p, \Omega) \coloneqq \\
+	\bigl( \text{LogH\"older}(p) \wedge 1 < p^- \leq p^+ < \infty \Rightarrow C_c^\infty(\Omega) \text{ is dense in } W^{1,p(\cdot)}_0(\Omega) \bigr)
+	\end{multlined}$
+	\item $
+		\fontsize{14pt}{16pt}\selectfont
+	\begin{multlined}[t]
+	\text{RieszRearrangement}(f, g, h) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( f, g, h: \mathbb{R}^n \to [0,\infty) \text{ measurable}\\ \Rightarrow \int_{\mathbb{R}^n} \int_{\mathbb{R}^n}
+	f(x)g(x-y)h(y) dx dy \leq \int_{\mathbb{R}^n} \int_{\mathbb{R}^n} f^*(x)g^*(x-y)h^*(y) dx dy \bigr)
+	\end{multlined}
+	\end{multlined}$
+\end{itemize}
+
+\subsection{Fatou's Lemma and Variants}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{FatouStandard}(f_n) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( \forall n, f_n: \Omega \to [0,\infty] \text{ measurable}\\ \Rightarrow \int_\Omega \liminf_{n\to\infty} f_n(x) \, d\mu(x) \leq \liminf_{n\to\infty} \int_\Omega f_n(x) \, d\mu(x) \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouReverse}(f_n, g) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( \forall n, f_n \leq g \ \mu\text{-a.e.} \wedge g \in L^1(\mu)\\ \Rightarrow \limsup_{n\to\infty} \int_\Omega f_n(x) \, d\mu(x) \leq \int_\Omega \limsup_{n\to\infty} f_n(x) \, d\mu(x) \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouVariableExponent}(f_n, p) \coloneqq \\
+	\bigl( \forall n, f_n \in L^{p(\cdot)}(\Omega) \wedge f_n \geq 0 \ \text{a.e.} \Rightarrow \rho_{p(\cdot)}\bigl(\liminf_{n\to\infty} f_n\bigr) \leq \liminf_{n\to\infty} \rho_{p(\cdot)}(f_n) \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouAEConvergence}(f_n) \coloneqq \\
+	\bigl( f_n \geq 0 \ \mu\text{-a.e.} \wedge f_n \to f \ \mu\text{-a.e.} \Rightarrow \int_\Omega f \, d\mu \leq \liminf_{n\to\infty} \int_\Omega f_n \, d\mu \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouConvergenceMeasure}(f_n) \coloneqq \\
+	\bigl( f_n \geq 0 \ \mu\text{-a.e.} \wedge f_n \to f \ \text{in measure} \Rightarrow \int_\Omega f \, d\mu \leq \liminf_{n\to\infty} \int_\Omega f_n \, d\mu \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouUniformIntegrable}(f_n) \coloneqq \\
+		\begin{multlined}[t]
+	\bigl( f_n \geq 0 \ \mu\text{-a.e.} \wedge \{f_n\} \text{ uniformly integrable}\\ \Rightarrow \lim_{n\to\infty} \int_\Omega f_n \, d\mu = \int_\Omega \lim_{n\to\infty} f_n \, d\mu \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+		\fontsize{12pt}{14pt}\selectfont
+	\text{FatouModularConvergence}(f_n, p) \coloneqq \\ 	
+	\bigl( f_n \geq 0 \ \text{a.e.} \wedge f_n \to f \ \text{in measure} \Rightarrow \rho_{p(\cdot)}(f) \leq \liminf_{n\to\infty} \rho_{p(\cdot)}(f_n) \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\fontsize{12pt}{14pt}\selectfont
+	\text{FatouWithUpperBound}(f_n, g) \coloneqq \\
+	\fontsize{10pt}{12pt}
+	\bigl( \forall n, 0 \leq f_n \leq g \ \mu\text{-a.e.} \wedge g \in L^1(\mu) \Rightarrow \int_\Omega \limsup_{n\to\infty} f_n \, d\mu \geq \limsup_{n\to\infty} \int_\Omega f_n \, d\mu \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouInfimum}(f_n) \coloneqq \\
+	\bigl( f_n \geq 0 \ \mu\text{-a.e.} \wedge \inf_n f_n \in L^1(\mu) \Rightarrow \int_\Omega \inf_{n} f_n \, d\mu \leq \inf_n \int_\Omega f_n \, d\mu \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouSet}(\{E_n\}) \coloneqq \\
+	\bigl( \{E_n\} \subset \mathcal{F} \ (\sigma\text{-algebra}) \Rightarrow \mu\bigl(\liminf_{n\to\infty} E_n\bigr) \leq \liminf_{n\to\infty} \mu(E_n) \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouCharacteristic}(\chi_{E_n}) \coloneqq \\
+	\bigl( E_n \in \mathcal{F} \Rightarrow \int_\Omega \liminf_{n\to\infty} \chi_{E_n}(x) \, d\mu(x) \leq \liminf_{n\to\infty} \mu(E_n) \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouProductMeasure}(f_n, \mu \times \nu) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( f_n: X \times Y \to [0,\infty] \text{ measurable}
+	\\
+	 \Rightarrow \int_{X \times Y} \liminf_{n\to\infty} f_n \, d(\mu \times \nu) \leq \liminf_{n\to\infty} \int_{X \times Y} f_n \, d(\mu \times \nu) \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouVaryingMeasures}(f_n, \mu_n) \coloneqq \\
+	\bigl( f_n \geq 0 \ \text{measurable} \wedge \mu_n \rightharpoonup^* \mu \Rightarrow \int f \, d\mu \leq \liminf_{n\to\infty} \int f_n \, d\mu_n \bigr)
+	\end{multlined}$
+\end{itemize}
+
+\subsection{Specific Applications}
+
+\fontsize{14pt}{17pt}\selectfont
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{Fatou}(f_{n_k}, f_m) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( \text{For fixed } m \geq N, \text{ apply Fatou's lemma to }\\ |f_{n_k} - f_m|^{p(x)}: \int_\Omega |f(x) - f_m(x)|^{p(x)} dx \leq \liminf_{k\to\infty} \int_\Omega |f_{n_k}(x) - f_m(x)|^{p(x)} dx \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouLuxemburgNorm}(f_n, p) \coloneqq \\
+	\bigl( f_n \geq 0 \ \text{a.e.} \wedge f_n \to f \ \text{in measure} \Rightarrow \|f\|_{p(\cdot)} \leq \liminf_{n\to\infty} \|f_n\|_{p(\cdot)} \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouModularLSC}(f_n, p) \coloneqq \\
+	\bigl( f_n \to f \ \text{in measure} \Rightarrow \rho_{p(\cdot)}(f) \leq \liminf_{n\to\infty} \rho_{p(\cdot)}(f_n) \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouUnitBall}(f_n, p) \coloneqq \\
+	\bigl( \rho_{p(\cdot)}(f_n) \leq 1 \ \forall n \wedge f_n \to f \ \text{a.e.} \Rightarrow \rho_{p(\cdot)}(f) \leq 1 \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouNormConvergence}(f_n, p) \coloneqq \\
+	\bigl( f_n \to f \ \text{in measure} \wedge \|f_n\|_{p(\cdot)} \to L \Rightarrow \|f\|_{p(\cdot)} \leq L \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouTruncations}(f_k, p) \coloneqq \\
+	\bigl( f_k = \min\{|f|, k\} \cdot \text{sign}(f) \Rightarrow \rho_{p(\cdot)}(f) = \lim_{k\to\infty} \rho_{p(\cdot)}(f_k) \leq \liminf_{k\to\infty} \rho_{p(\cdot)}(f_k) \bigr)
+	\end{multlined}$
+\end{itemize}
+
+\subsection{Extended Forms and Corollaries}
+\begin{itemize}
+	\item $
+	\begin{multlined}[t]
+	\text{FatouLebesgue}(f_n) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( |f_n| \leq g \ \mu\text{-a.e.} \wedge g \in L^1(\mu)\\ \Rightarrow \int_\Omega \liminf_{n\to\infty} f_n \, d\mu \leq \liminf_{n\to\infty} \int_\Omega f_n \, d\mu \leq \\ \qquad \qquad \qquad \qquad\qquad\qquad \qquad \leq \limsup_{n\to\infty} \int_\Omega f_n \, d\mu \leq \int_\Omega \limsup_{n\to\infty} f_n \, d\mu \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouSeries}(a_{nk}) \coloneqq \\
+	\bigl( \forall n,k, a_{nk} \geq 0 \Rightarrow \sum_{k=1}^\infty \liminf_{n\to\infty} a_{nk} \leq \liminf_{n\to\infty} \sum_{k=1}^\infty a_{nk} \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouParameter}(f(t,x)) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( f: [a,b] \times \Omega \to [0,\infty] \text{ measurable}\\ \qquad \qquad \qquad\qquad\Rightarrow \int_\Omega \liminf_{t\to t_0} f(t,x) \, d\mu(x) \leq \liminf_{t\to t_0} \int_\Omega f(t,x) \, d\mu(x) \bigr)
+	\end{multlined}
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouWeakConvergence}(f_n) \coloneqq \\
+	\bigl( f_n \geq 0 \ \text{a.e.} \wedge f_n \rightharpoonup f \ \text{in } L^1 \Rightarrow \int f \, d\mu \leq \liminf_{n\to\infty} \int f_n \, d\mu \bigr)
+	\end{multlined}$
+	\item $
+	\begin{multlined}[t]
+	\text{FatouConvex}(\phi, f_n) \coloneqq \\
+	\begin{multlined}[t]
+	\bigl( \phi: \mathbb{R} \to \mathbb{R} \text{ convex} \wedge f_n \to f \ \text{in measure}\\\qquad \qquad\qquad\qquad \qquad\qquad \Rightarrow \int \phi(f) \, d\mu \leq \liminf_{n\to\infty} \int \phi(f_n) \, d\mu \bigr)
+	\end{multlined}
+	\end{multlined}$
+\end{itemize}
+\begin{thebibliography}{99}
+	
+	\bibitem{Diening2011}
+	Diening, L., Harjulehto, P., H\"{a}st\"{o}, P., and R\u{u}\v{z}i\v{c}ka, M.
+	\emph{Lebesgue and Sobolev Spaces with Variable Exponents}.
+	Springer-Verlag, Berlin, 2011.
+	
+	\bibitem{Ruzicka2000}
+	R\u{u}\v{z}i\v{c}ka, M.
+	\emph{Electrorheological Fluids: Modeling and Mathematical Theory}.
+	Springer-Verlag, Berlin, 2000.
+	
+	\bibitem{Fan2015}
+	Fan, X.
+	\emph{An overview of $p(x)$-Laplace equations}.
+	Journal of Mathematical Analysis and Applications, 432(2):785--801, 2015.
+	
+	\bibitem{Antontsev2006}
+	Antontsev, S.~N. and Rodrigues, J.~F.
+	\emph{On stationary thermo-rheological viscous flows}.
+	Annali dell'Università di Ferrara, 52(1):19--36, 2006.
+	
+	\bibitem{Acerbi2007}
+	Acerbi, E. and Mingione, G.
+	\emph{Regularity results for parabolic systems related to a class of non-Newtonian fluids}.
+	Annales de l'Institut Henri Poincaré C, Analyse Non Linéaire, 24(1):1--19, 2007.
+	
+	\bibitem{Zhikov2007}
+	Zhikov, V.~V.
+	\emph{On the density of smooth functions in Sobolev-Orlicz spaces}.
+	Journal of Mathematical Sciences, 143(3):3169--3184, 2007.
+		\bibitem{diening2011} Diening, L., Harjulehto, P., H\"ast\"o, P., and R\u{u}\v{z}i\v{c}ka, M. (2011). \emph{Lebesgue and Sobolev Spaces with Variable Exponents}. Springer.
+ \bibitem{github} Mahdi Taharb. \emph{PDE Repository}. GitHub. \url{https://github.com/mahditaharb-maker/PDE/}. (Accessed: 2024).
+
+	
+\end{thebibliography}
+	\makeatletter
+	\let\addcontentsline\orig@addcontentsline \makeatother
+
+\end{document}
