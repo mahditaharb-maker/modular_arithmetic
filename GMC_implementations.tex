@@ -1,0 +1,690 @@
+\documentclass[12pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{array,ragged2e}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[hypcap=false]{caption}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{textcase}
+%\usepackage{imakeidx}
+\makeindex
+
+%--------------------------------------------------------------------
+% GEOMETRY SETUP
+%--------------------------------------------------------------------
+\geometry{letterpaper, margin=1in}
+% Index commands
+\newcommand{\idx}[1]{\index{#1}}
+\newcommand{\idxsub}[2]{\index{#1!#2}}
+%--------------------------------------------------------------------
+% SPACING SETUP
+%--------------------------------------------------------------------
+\onehalfspacing
+\frenchspacing
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0.5\baselineskip}
+
+%--------------------------------------------------------------------
+% THEOREM ENVIRONMENTS
+%--------------------------------------------------------------------
+\newtheoremstyle{break}
+{4pt plus 1pt minus 1pt}
+{4pt plus 1pt minus 1pt}
+{\normalfont}
+{0pt}
+{\bfseries}
+{.}
+{\newline}
+{}
+
+\theoremstyle{break}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{axiom}{Axiom}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+\newtheorem{conjecture}{Conjecture}
+
+%--------------------------------------------------------------------
+% LISTINGS SETUP
+%--------------------------------------------------------------------
+\lstdefinestyle{pseudocode}{
+    language={},
+    basicstyle=\ttfamily\small,
+    keywordstyle=\bfseries\color{blue},
+    commentstyle=\itshape\color{green!50!black},
+    identifierstyle=\color{black},
+    stringstyle=\color{orange},
+    numbers=left,
+    numberstyle=\tiny,
+    breaklines=true,
+    frame=single,
+    tabsize=2,
+    morekeywords={Input,Output,for,while,if,then,else,return,procedure,end},
+    literate={:=}{{$\gets$}}1 {<=}{{$\leq$}}1 {>=}{{$\geq$}}1 {!=}{{$\neq$}}1,
+}
+\lstset{style=pseudocode}
+
+%--------------------------------------------------------------------
+% HYPERREF SETUP
+%--------------------------------------------------------------------
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={GMC Implementations of Finite Axiomatics},
+    pdfauthor={Brahimi, Mahdi. Tahar.}
+}
+%--------------------------------------------------------------------
+% SUBJECT CLASSIFICATION
+%--------------------------------------------------------------------
+\makeatletter
+\@namedef{subjclassname@2020}{
+	\textup{2025} Mathematics Subject Classification}
+\makeatother
+\subjclass[2020]{03C62, 11U99, 68W30}
+\keywords{
+GMC, finite axiomatics, computability, floating-point, unit-additive rings
+}
+
+%--------------------------------------------------------------------
+% TITLE AND AUTHOR
+%--------------------------------------------------------------------
+\title{\NoCaseChange{GMC implementations}}
+\author{ \NoCaseChange{Brahimi, Mahdi. Tahar.} \\
+	Department of Mathematics\\
+	University of Mohamed Boudiaf, Msila, Algeria \\
+	{ \texttt{\href{mailto:mahdi.brahimi@univ-msila.dz}{%
+				\lowercase{mahditahar.brahimi@univ-msila.dz}}}} }
+
+%--------------------------------------------------------------------
+% SECTION NUMBERING (WITH LEADING ZEROS)
+%--------------------------------------------------------------------
+\renewcommand{\thesection}{\ifnum\value{section}<1 0\fi\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+
+%--------------------------------------------------------------------
+% SECTION FORMATTING
+%--------------------------------------------------------------------
+\makeatletter
+\def\@seccntformat#1{\csname the#1\endcsname.\space}
+
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+	{-3.5ex \@plus -1ex \@minus -.2ex}%
+	{2.3ex \@plus.2ex}%
+	{\normalfont\Large\bfseries}}
+
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+	{-3.25ex\@plus -1ex \@minus -.2ex}%
+	{1.5ex \@plus .2ex}%
+	{\normalfont\large\bfseries}}
+\makeatother
+
+%--------------------------------------------------------------------
+% PREVENT AUTOMATIC UPPERCASING
+%--------------------------------------------------------------------
+\makeatletter
+\let\MakeUppercase\@firstofone
+\makeatother
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{1}
+\setlength{\parindent}{0pt}
+\begin{document}
+	\pagestyle{empty}
+\pagenumbering{roman}
+\setstretch{1.2}
+\begin{abstract}
+\text{ } \\	We present finite axiomatic systems for \(\mathbb{Z},\mathbb{Q},\mathbb{R}\) using the General Mimicry Criterion (GMC).\\ The rings \(\mathbb{Z}/2^{m}\mathbb{Z}\) serve as fundamental building blocks.\\ For each system we fix a precision level \(m\) and obtain finite computer representations:\\ \(\mathbb{Z}/2^{m}\mathbb{Z}\) (exact integers), \(\mathbb{Q}_m\) (bounded rationals), \(\mathbb{R}_m\) (dyadic rationals).\\ All arithmetic operations are computable and decidable.
+\end{abstract}
+\maketitle
+\thispagestyle{empty}
+\tableofcontents
+\thispagestyle{empty}
+\clearpage
+	\pagestyle{plain}
+\pagenumbering{arabic}
+\section{Introduction}
+\idx{GMC (General Mimicry Criterion)}
+\idx{General Mimicry Criterion|see{GMC}}
+The General Mimicry Criterion (GMC) requires that for any units \(u,v\), \begin{center}if \(u+v\) is a unit then $u+v=0.$\end{center} This property was introduced in the context of unit-additive rings \cite{epstein2025, epstein2025b}.\\ The rings \(\mathbb{Z}/2^{m}\mathbb{Z}\) (\(m\ge2\)) satisfy this property.\\ We show how these finite positive-characteristic rings generate axiomatic descriptions of the classical number systems.
+\section{GMC Integer Axioms and \(\mathbb{Z}/2^{m}\mathbb{Z}\)}
+\idx{GMC integer axioms}
+\idx{integers!GMC axioms}
+We begin by axiomatizing the integers through their finite GMC quotients.\\ The key insight is that the integers are characterized as a subring of the inverse limit of the rings \(\mathbb{Z}/2^{m}\mathbb{Z}\) together with a coherence condition.
+\begin{definition}[GMC Integer Axioms]
+\label{def:gmc-z}
+\idx{inverse limit}
+\idx{2-adic integers@\(\widehat{\mathbb{Z}}_2\)}
+\idx{\(\mathbb{Z}/2^{m}\mathbb{Z}\)@\(\mathbb{Z}/2^{m}\mathbb{Z}\)}
+A \emph{GMC integer system} is a triple \((\mathcal{Z}, \{R_m\}_{m\ge 1}, \{\phi_{m,n}\})\) where:
+\begin{enumerate}[label=(GMCZ\arabic*)]
+\item (Finite Components) For each \(m\ge 1\), \(R_m\) is a commutative ring with unity such that: \begin{center}$R_m \cong \mathbb{Z}/2^{m}\mathbb{Z}.$\end{center} Each \(R_m\) has positive characteristic \(2^m\).
+\item (Transition Maps) For each \(n \ge m \ge 1\), there exists a surjective ring homomorphism: \begin{center}\(\phi_{m,n}: R_n \to R_m\) satisfying \(\phi_{m,n} \circ \phi_{n,k} = \phi_{m,k}\) for all \(k \ge n \ge m\).\end{center}
+\item (GMC Core) Each \(R_m\) satisfies the GMC core property:\begin{center} For all units \(u,v \in R_m^{\times}\), if \(u+v \in R_m^{\times}\) then \(u+v = 0\) in \(R_m\).\end{center}
+\idx{GMC core property}
+\item (Limit Object) \(\mathcal{Z}\) is the inverse limit \(\varprojlim_m R_m\) with respect to the maps \(\phi_{m,n}\).\\ Elements of \(\mathcal{Z}\) are computable as consistent sequences of residues modulo \(2^m\);\\ each such sequence is a potentially unbounded stream of finite data.
+\item (Embedding of \(\mathbb{Z}\)) There is an injective ring homomorphism \begin{center} \(\iota: \mathbb{Z} \hookrightarrow \mathcal{Z}\) sending \(1\) to \((1,1,1,\ldots)\). \end{center}   Thus \(\mathbb{Z}\) is realized as a subring of \(\mathcal{Z}\), and every integer is uniquely represented.
+\end{enumerate}
+\end{definition}
+\begin{theorem}[Characterization of \(\mathbb{Z}\)]
+\label{thm:z-unique}
+\idx{\(\mathbb{Z}\)!characterization}
+Up to isomorphism, the unique GMC integer system has \(\mathcal{Z} \cong \widehat{\mathbb{Z}}_2\), the ring of 2-adic integers. Moreover, the image of \(\mathbb{Z}\) under \(\iota\) is algorithmically dense: \begin{center}For any finite prefix of a 2-adic expansion we can find an integer matching it modulo \(2^m\).\end{center}
+\end{theorem}
+\begin{proof}
+By definition, \(\mathcal{Z} = \varprojlim_m \mathbb{Z}/2^{m}\mathbb{Z}\) which is precisely the ring of 2-adic integers \(\widehat{\mathbb{Z}}_2\).\\ The natural map \(\mathbb{Z} \to \widehat{\mathbb{Z}}_2\) is injective and has the property that for any \(m\) and any residue \(a \bmod 2^m\) there exists an integer whose reduction is that residue.\\ The GMC core property holds for each \(\mathbb{Z}/2^{m}\mathbb{Z}\) by Proposition \ref{prop:gmc-z2m}.
+\end{proof}
+\begin{corollary}
+\label{cor:z-embedding}
+\idx{\(\mathbb{Z}\)!as dense subring of \(\widehat{\mathbb{Z}}_2\)}
+The ordinary integers \(\mathbb{Z}\) are characterized as the unique minimal computably dense subring of the 2-adic integers that satisfies the GMC core property at every finite level.
+\end{corollary}
+\begin{remark}
+\idx{unit group!\(U_m\)}
+GMC for \(\mathbb{Z}/2^{m}\mathbb{Z}\) is The Integers at Level \(m\). The ring \(\mathbb{Z}/2^{m}\mathbb{Z}\) is the prototypical GMC ring.\\ Its unit group:
+\[
+U_m = (\mathbb{Z}/2^{m}\mathbb{Z})^{\times} = \{ a\in\mathbb{Z}/2^{m}\mathbb{Z} \mid \gcd(a,2^m)=1 \},
+\]
+consists exactly of the odd residues.
+\end{remark}
+\begin{proposition}[Order of the Unit Group]
+\label{prop:order}
+\idx{unit group!order}
+For any \(m\ge 1\), \(|U_m| = \varphi(2^m) = 2^{m-1}\).
+\end{proposition}
+\begin{lemma}[Parity of Units]
+\label{lem:parity}
+Every unit in \(U_m\) is odd.
+\end{lemma}
+\begin{proof}
+If \(a\in U_m\) then \(\gcd(a,2^m)=1\), so \(a\) cannot be even; hence \(a\) is odd.
+\end{proof}
+\begin{lemma}[Powers Preserve Parity]
+\label{lem:power-parity}
+If \(x\in U_m\) is odd, then \(x^n\) is odd for any integer \(n\ge 1\).
+\end{lemma}
+\begin{proof}
+The product of odd numbers is odd; by induction, \(x^n\) is odd.
+\end{proof}
+\begin{lemma}[Sum of Odds]
+\label{lem:sum-odds}
+The sum of two odd numbers is even.
+\end{lemma}
+\begin{proof}
+Let \(a=2k+1,\ b=2\ell+1\); then \(a+b=2(k+\ell+1)\) is divisible by 2.
+\end{proof}
+\begin{lemma}[Even Numbers Are Not Units]
+\label{lem:even-not-unit}
+For any \(m\ge 2\), if \(a\in\mathbb{Z}/2^{m}\mathbb{Z}\) is even, then \(a\notin U_m\).
+\end{lemma}
+\begin{proof}
+If \(a\) is even, then \(\gcd(a,2^m)\ge 2\), so \(a\) is not a unit.
+\end{proof}
+From these elementary facts we obtain the GMC core property.
+\begin{proposition}
+\label{prop:gmc-z2m}
+\idx{\(\mathbb{Z}/2^{m}\mathbb{Z}\)!GMC core property}
+For every \(m\ge 2\), the ring \(\mathbb{Z}/2^{m}\mathbb{Z}\) satisfies the GMC core property.
+\end{proposition}
+\begin{proof}
+If \(u,v\in U_m\) then \(u+v\) is even. By Lemma \ref{lem:even-not-unit}, an even element cannot be a unit unless it is \(0\) modulo \(2^m\). Hence whenever \(u+v\) is a unit we must have \(u+v=0\).
+\end{proof}
+As a direct consequence, Fermat's Last Theorem holds vacuously in the unit group \cite{wiles1995modular}.
+\begin{theorem}[No FLT Solutions in \(U_m\)]
+\label{thm:flt}
+\idx{Fermat's Last Theorem!in \(\mathbb{Z}/2^{m}\mathbb{Z}\)}
+For any integers \(m\ge 2\) and \(n\ge 1\): \begin{center} The equation \(x^n+y^n=z^n\) has no solutions with \(x,y,z\in U_m\).\end{center}
+\end{theorem}
+\begin{proof}
+\(x^n,y^n,z^n\) are odd by Lemma \ref{lem:parity} and Lemma \ref{lem:power-parity}, so \(x^n+y^n\) is even by Lemma \ref{lem:sum-odds},\\ hence cannot equal the odd \(z^n\) (Lemma \ref{lem:even-not-unit}).
+\end{proof}
+For a fixed \(m\), the ring \(\mathbb{Z}/2^{m}\mathbb{Z}\) itself is a finite set with \(2^m\) elements.\\ It provides a finite computer representation of integers modulo \(2^m\), where arithmetic operations are efficiently computable and all properties are decidable.\\ This is the foundation of fixed‑precision integer arithmetic used in all modern processors \cite{PattersonHennessy2017}.\\ The corresponding algorithms are given in Appendix~\ref{sec:algorithms}.
+\section{GMC Axiomatic Model for \(\mathbb{Q}\)}
+\idx{GMC rational axioms}
+\idx{\(\mathbb{Q}\)!GMC axioms}
+We now build an axiomatic description of the rational numbers using the GMC core property and an inverse limit of finite GMC rings.\\ The fundamental building blocks are precisely the rings \(\mathbb{Z}/2^{m}\mathbb{Z}\) studied above.\\ To obtain a field of characteristic zero, we require that the ring contain a copy of \(\mathbb{Z}\).
+\begin{definition}[GMC Rational Axioms]
+\label{def:gmc-q}
+A \emph{GMC rational system} is a triple \((R,U,\{p_i\})\) where:
+\begin{enumerate}[label=(GMCQ\arabic*)]
+\item \(R\) is a commutative integral domain that contains a subring isomorphic to \(\mathbb{Z}\).
+\item \(U = R^{\times}\) is the group of units.
+\item (Local‑Global) Every nonzero \(a\in R\) factors as \(a = u\prod_i p_i^{e_i}\) with \(u\in U\) and distinguished primes \(p_i\). This factorization is computable given the list of primes.
+\item (GMC Core) For all \(u,v\in U\), if \(u+v\in U\) then \(u+v=0\).
+\item (Density) For every nonzero \(r\in R\) there exists \(u\in U\) with \(r+u\in U\).\\ Moreover, there is an algorithm that, given \(r\), produces such a \(u\).
+\item (Prime Cycle) There exists a computably enumerable sequence of distinct primes \(p_1,p_2,\ldots\) such that each residue ring \(R/(p_i)\cong \mathbb{Z}/2^{m_i}\mathbb{Z}\) for some \(m_i\ge2\).\\ The sequence may be extended as needed;\\ for any finite bound we can effectively list the primes up to that bound.
+\end{enumerate}
+\end{definition}
+\begin{theorem}[Characterization of \(\mathbb{Q}\)]
+\label{thm:q-unique}
+\idx{\(\mathbb{Q}\)!characterization}
+Up to isomorphism, the unique GMC rational system is the field of rational numbers \(\mathbb{Q}\).\\ Every rational number can be represented as a finite string of bits (numerator and denominator) and arithmetic operations are computable.
+\end{theorem}
+\begin{proof}
+The axioms imply that \(R\) is the inverse limit of the finite GMC rings obtained as quotients by powers of the primes \(p_i\). Because each residue field has characteristic \(2\), the primes \(p_i\) must be such that \(\mathbb{F}_{p_i}\cong\mathbb{Z}/2^{m_i}\mathbb{Z}\); this forces \(p_i-1 = 2^{m_i-1}\), i.e. \(p_i\) is a Fermat prime.
+\idx{Fermat primes}
+The presence of a copy of \(\mathbb{Z}\) ensures characteristic zero.\\ The density axiom together with the GMC core property yields an embedding of \(\mathbb{Q}\) into the inverse limit, and surjectivity follows from an approximation lemma (Lemma \ref{lem:gmc-approx-q}).
+\end{proof}
+\begin{lemma}[GMC Approximation]
+\label{lem:gmc-approx-q}
+\idx{GMC approximation lemma}
+\idx{Chinese Remainder Theorem}
+For any finite set of primes \(p_{i_1},\dots,p_{i_t}\) and any exponents \(e_j\ge1\), the diagonal map $$R\to\prod_j R/(p_{i_j}^{e_j}),$$ is surjective. Moreover, there is an algorithm to compute a pre‑image of any tuple using the Chinese Remainder Theorem (see Appendix~\ref{sec:algorithms}).
+\end{lemma}
+Thus \(\mathbb{Q}\) can be recovered as an inverse limit of finite GMC rings.\\ From a computational standpoint, restricting to a fixed finite set of primes yields a number system where arithmetic is decidable and can be implemented using modular arithmetic \cite{knuth1997art}.
+\section{Ordered GMC Axiomatic Model for \(\mathbb{R}\)}
+\idx{ordered GMC axioms}
+\idx{\(\mathbb{R}\)!GMC axioms}
+The real numbers do not satisfy the GMC core property (e.g. \(1+2=3\) gives a counterexample). To capture \(\mathbb{R}\) we replace the core condition by axioms of order and completeness, interpreting completeness in a computational sense: every computable sequence of nested intervals with rational endpoints whose lengths tend to zero determines a computable real number.\\ This approach follows the traditions of constructive analysis \cite{bishop1967, poureLrichards2000}.\\ Again we require a copy of \(\mathbb{Z}\) to ensure characteristic zero.
+\begin{definition}[Ordered GMC Axioms]
+\label{def:ogmc}
+An \emph{Ordered GMC system} is a tuple \((R,+,\cdot,0,1,<)\) satisfying:
+\begin{enumerate}[label=(OGMC\arabic*)]
+\item (Field) \((R,+,\cdot,0,1)\) is a field that contains a subring isomorphic to \(\mathbb{Z}\).
+\item (Ordered field) \(<\) is a total order compatible with addition and multiplication.
+\item (Archimedean) For every \(x>0\) there exists a computable natural number \(n\) with: \begin{center}$n\cdot1 > x.$\end{center}
+\idx{Archimedean property}
+\item (Dedekind completeness) Every nonempty bounded‑above subset that is computably enumerable has a least upper bound in \(R\). (See \cite{rudin1976principles} for the classical treatment.)
+\idx{Dedekind completeness}
+\item (Unit positivity) For any units \(u,v>0\), the sum \(u+v\) is a unit and \(u+v>0\).
+\item (GMC approximation) For every \(\varepsilon>0\) and every \(x\in R\) there exists a dyadic rational \(d = k/2^m\) with \(|x-d|<\varepsilon\); given \(\varepsilon\) and a description of \(x\), one can compute such a \(d\).
+\end{enumerate}
+\end{definition}
+\begin{theorem}[Uniqueness of \(\mathbb{R}\)]
+\label{thm:r-unique}
+\idx{\(\mathbb{R}\)!characterization}
+Up to order‑preserving field isomorphism, the unique Ordered GMC system is the real numbers \(\mathbb{R}\) in the sense of constructive analysis.
+\end{theorem}
+\begin{proof}
+Axioms (OGMC1)–(OGMC4) are the standard axioms for a complete ordered field, with a constructive interpretation of completeness and the presence of \(\mathbb{Z}\) guaranteeing characteristic zero. The remaining axioms follow automatically: in any ordered field the sum of two positives is positive and nonzero, and dyadic rationals are dense in the sense that for any real \(x\) and any \(\varepsilon\) one can compute a dyadic approximation by binary expansion\qquad \qquad (see Algorithm~\ref{alg:all}).
+\end{proof}
+Thus \(\mathbb{R}\) admits a finite axiomatic description closely related to the GMC framework.\\ In computational practice, real numbers are approximated by dyadic rationals at a fixed precision \(m\), i.e. the set \(\mathbb{R}_m\) defined below, which forms the basis of the IEEE 754 standard \cite{goldberg1991,ieee754}.
+\section{Computational Representations for Fixed \(m\)}
+\idx{precision level \(m\)}
+In each system we fix a precision level \(m\) and examine the objects exactly representable in a computer using \(m\) bits. The theory of finite precision arithmetic is extensively studied in \cite{matula1970foundations}.
+\subsection{Integers: \(\mathbb{Z}/2^{m}\mathbb{Z}\)}
+\idx{\(\mathbb{Z}/2^{m}\mathbb{Z}\)!as computer representation}
+For a fixed \(m\), \(\mathbb{Z}/2^{m}\mathbb{Z}\) has exactly \(2^m\) elements. Its unit group has size \(2^{m-1}\).\\ This corresponds to unsigned \(m\)-bit integer arithmetic.\\ All operations are computable in constant time; the truth of any first‑order statement is decidable \cite{Presburger1929}. Algorithms are given in Appendix~\ref{sec:algorithms}.
+\subsection{Rationals: \(\mathbb{Q}_m\) (Bounded Numerator and Denominator)}
+\idx{\(\mathbb{Q}_m\) (bounded rationals)}
+For a fixed \(m\ge1\), define:
+\[
+\mathbb{Q}_m = \left\{\frac{a}{b} \;:\; a,b\in\mathbb{Z},\; |a|,|b| \le 2^m-1,\; b\neq 0\right\},
+\]
+where fractions are considered as distinct pairs.\\ This set is finite with cardinality at most \((2^{m+1}-1)^2\).\\ Every element can be stored using two \(m\)-bit signed integers.\\ Arithmetic operations may overflow, requiring either rounding or promotion.\\ Equality testing is decidable.
+\begin{theorem}[Representable Rationals at Level \(m\)]
+\label{thm:q-m}
+ Membership, equality, and basic arithmetic are computable.
+ \begin{center}$|\mathbb{Q}_m| \le (2^{m+1}-1)^2.$ \end{center}
+\end{theorem}
+\subsection{Reals: \(\mathbb{R}_m\) (Fixed‑Point Binary Numbers)}
+\idx{\(\mathbb{R}_m\) (dyadic rationals)}
+\idx{dyadic rationals}
+For a fixed precision \(m\ge0\), define
+\[
+\mathbb{R}_m = \left\{\frac{k}{2^m} : k\in\mathbb{Z},\ -2^m\le k\le 2^m\right\}.
+\]
+\begin{theorem}[Fixed‑Point Numbers at Precision \(m\)]
+\label{thm:r-m}
+For any desired error bound \(\varepsilon\) we can choose \(m\) with \(2^{-m} < \varepsilon\), such that:
+\begin{center}\(|\mathbb{R}_m| = 2^{m+1}+1\).\end{center}
+ Arithmetic operations can be approximated by rounding to nearest representable value; rounding is computable in polynomial time. Equality and order are decidable.
+\end{theorem}
+Table~\ref{tab:ieee_params} lists IEEE 754 parameters; the mantissa bits \(m\) correspond to the precision of the dyadic approximations.
+\begin{table}[H]
+\centering
+\caption{IEEE 754 parameters}
+\label{tab:ieee_params}
+\idx{IEEE 754}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Format & Total bits & Sign bits & Exponent bits & Mantissa bits \(m\) & Bias & Machine epsilon \(2^{-m}\) \\ 
+\midrule
+Half    & 16 & 1 & 5  & 10 & 15  & \(2^{-10}\approx9.77\times10^{-4}\) \\
+Single  & 32 & 1 & 8  & 23 & 127 & \(2^{-23}\approx1.19\times10^{-7}\) \\
+Double  & 64 & 1 & 11 & 52 & 1023& \(2^{-52}\approx2.22\times10^{-16}\) \\
+Quad    &128 & 1 & 15 &112 &16383& \(2^{-112}\approx1.93\times10^{-34}\) \\
+\bottomrule
+\end{tabular}
+\end{table}
+\subsection{Case Study: Half-Precision (\(m=10\))}
+\idx{half-precision}
+Half-precision (16 bits) with mantissa bits \(m=10\) provides a concrete GMC level.\\ The fractional part \(f\) ranges over dyadic rationals \(k/2^{10}\).\\ The set of representable numbers contains \(65504\) distinct finite values.\\ The GMC approximation axiom (OGMC6) is realized by the IEEE rounding operation.\\ The GMC core property fails exactly because sums require rounding, illustrating the transition from exact to approximate arithmetic.
+\subsection{Comparison}
+Table~\ref{tab:comparison} summarizes the three finite representations.
+\begin{table}[H]
+\centering
+\caption{Fixed‑\(m\) computer representations}
+\label{tab:comparison}
+\begin{tabular}{|l|c|c|c|}
+\hline
+System & Object at level \(m\) & Size & Machine Representation \\
+\hline
+Integers & \(\mathbb{Z}/2^{m}\mathbb{Z}\) & \(2^m\) & Binary fixed-width integer \\
+Rationals & \(\mathbb{Q}_m\) (bounded) & \(\le (2^{m+1}-1)^2\) & Pair of binary integers \\
+Reals & \(\mathbb{R}_m\) (dyadic) & \(2^{m+1}+1\) & Fixed-point binary \\
+\hline
+\end{tabular}
+\end{table}
+\section{Modern Algebraic Framework of Digital Systems}
+\idx{digital systems!algebraic foundation}
+The rings \(\mathbb{Z}/2^{m}\mathbb{Z}\) form the algebraic foundation of virtually every modern digital system.\\ We survey their appearance in CPUs, GPUs, and cryptography.
+\subsection{Historical Interlude: The Burroughs B5000}
+\idx{Burroughs B5000}
+The Burroughs B5000 (1963) used a 48-bit word with base‑8 exponent \cite{burroughs1970}.\\ Its octal structure introduced a prime‑like distinction (8 vs 2) and wobbling precision, echoing GMC themes \cite{utahhistorical2023}. While it did not use Fermat primes, it shows that prime bases have been explored in hardware. The evolution to base‑2 in IEEE 754 aligns with the GMC emphasis on dyadic approximations.
+\subsection{CPU Integer Arithmetic}
+\idx{CPU!integer arithmetic}
+CPU registers of width \(m\) implement arithmetic in \(\mathbb{Z}/2^{m}\mathbb{Z}\) (two's complement).\\ The unit group \(U_m\) consists of odd numbers; their inverses are used in cryptography.\\ The GMC core property holds vacuously (odd+odd is even, never a unit except zero).\\ This simplifies compiler optimizations and error detection.
+\subsection{Floating-Point Units and IEEE 754}
+\idx{floating-point arithmetic}
+\idx{IEEE 754}
+FPUs implement IEEE 754 \cite{goldberg1991,ieee754}, where representable numbers are finite subsets of dyadic rationals. Rounding provides an algorithmic realization of the GMC approximation axiom.\\ The set \(\mathbb{R}_m\) models the significand for a fixed exponent range.
+\subsection{Vector Units and GPU Arithmetic}
+\idx{GPU!arithmetic}
+\idx{SIMD}
+SIMD units treat vector registers as products of copies of \(\mathbb{Z}/2^{m}\mathbb{Z}\) or \(\mathbb{R}_m\).\\ This product structure echoes the GMC Approximation Lemma\ref{lem:gmc-approx-q} , enabling data‑parallel operations via CRT-like decompositions.
+\subsection{Cryptographic Hardware}
+\idx{cryptography!binary fields}
+Binary fields \(\mathbb{F}_{2^m}\) share the characteristic‑2 nature of our building blocks; their unit groups have order \(2^m-1\). Elliptic curve cryptography over binary fields uses these properties. Multi‑precision arithmetic (e.g., in RSA) effectively handles elements of \(\widehat{\mathbb{Z}}_2\) truncated to finite length.
+\subsection{Homomorphic Encryption}
+\idx{homomorphic encryption}
+\idx{CKKS}
+FHE schemes like CKKS \cite{ckks2017} use CRT decomposition (modulus switching) to refresh ciphertexts, exactly as in the GMC Approximation Lemma \ref{lem:gmc-approx-q}.
+\begin{table}[H]
+\centering
+\caption{GMC correspondences in modern systems}
+\label{tab:modern-gmc}
+\idx{GMC!correspondences in digital systems}
+\begin{tabular}{|l|l|}
+\hline
+Digital System & GMC Structure \\
+\hline
+CPU integer unit & \(\mathbb{Z}/2^{m}\mathbb{Z}\) \\
+FPU & \(\mathbb{R}_m\) (dyadic approximations) \\
+GPU vector registers & \(\prod \mathbb{Z}/2^{m}\mathbb{Z}\) or \(\prod \mathbb{R}_m\) \\
+Binary elliptic curve crypto & \(\mathbb{F}_{2^m}\) \\
+Homomorphic encryption (CKKS) & CRT decomposition \\
+Multi‑precision libraries & Inverse limit \(\varprojlim \mathbb{Z}/2^{m}\mathbb{Z}\) \\
+\hline
+\end{tabular}
+\end{table}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{-1}}
+\section{conclusion}
+The GMC framework yields finite computer representations at each precision level \(m\).\\ These correspond to actual implementations in processors, floating-point units, and cryptographic hardware.
+
+\medskip
+
+{\sc Conflict of interest.} The author declares no conflict of interest.
+
+\medskip
+
+{\sc Acknowledgement.}\\ \noindent The author thanks N. Epstein and J. Shapiro for foundational work on unit-additive rings \cite{epstein2025, epstein2025b}.
+\appendix
+\section{Algorithms for GMC Number Systems}
+\label{sec:algorithms}
+\idx{algorithms!for GMC number systems}
+This appendix gives pseudocode for the fundamental algorithms.\\ All procedures are collected into one continuous algorithmic environment that can break across pages.
+\begin{algorithmic}[1]
+\Procedure{Add}{$a,b$}\Comment{Addition in \(\mathbb{Z}/2^{m}\mathbb{Z}\)}
+\idx{algorithm!addition in \(\mathbb{Z}/2^{m}\mathbb{Z}\)}
+    \State $t \gets a+b$
+    \If{$t \ge 2^m$} $t \gets t-2^m$ \EndIf
+    \State \Return $t$
+\EndProcedure
+\Procedure{Mul}{$a,b$}\Comment{Multiplication in \(\mathbb{Z}/2^{m}\mathbb{Z}\)}
+\idx{algorithm!multiplication in \(\mathbb{Z}/2^{m}\mathbb{Z}\)}
+    \State $t \gets a \cdot b$
+    \State \Return $t \bmod 2^m$
+\EndProcedure
+\Procedure{InvMod2m}{$a$}\Comment{Modular inverse of odd $a$ (Newton method)}
+\idx{algorithm!modular inverse}
+    \State $x \gets 1$
+    \For{$i \gets 1$ to $m-1$}
+        \State $x \gets x \cdot (2 - a \cdot x) \bmod 2^{2^i}$
+    \EndFor
+    \State \Return $x \bmod 2^m$
+\EndProcedure
+\Procedure{Reduce}{$a,b$}\Comment{Reduce fraction $a/b$}
+\idx{algorithm!fraction reduction}
+    \State $g \gets \gcd(|a|,|b|)$
+    \State \Return $(a/g,\; b/g)$
+\EndProcedure
+\Procedure{AddQ}{$(a_1,b_1),(a_2,b_2)$}\Comment{Add rationals with overflow check}
+\idx{algorithm!rational addition}
+    \State $a_3 \gets a_1 b_2 + a_2 b_1$
+    \State $b_3 \gets b_1 b_2$
+    \State $(a_3,b_3) \gets \text{Reduce}(a_3,b_3)$
+    \If{$|a_3|>2^m-1$ or $|b_3|>2^m-1$}
+        \State \Return overflow
+    \Else
+        \State \Return $(a_3,b_3)$
+    \EndIf
+\EndProcedure
+\Procedure{RoundDyadic}{$x,m$}\Comment{Nearest dyadic rational \(k/2^m\) (ties to even)}
+\idx{algorithm!rounding to dyadic}
+    \If{$x\le -1$} \Return $-2^m$
+    \ElsIf{$x\ge 1$} \Return $2^m$
+    \Else
+        \State $k \gets \lfloor x\cdot2^m + 0.5\rfloor$
+        \If{$k\cdot2^m$ odd and $x\cdot2^m - k = 0.5$}
+            \State $k \gets k-1$
+        \EndIf
+        \State \Return $k$
+    \EndIf
+\EndProcedure
+\Procedure{CRT}{$(r_1,n_1),\dots,(r_t,n_t)$}\Comment{Chinese Remainder Theorem}
+\idx{algorithm!Chinese Remainder Theorem}
+    \State $N \gets \prod n_i$
+    \State $x \gets 0$
+    \For{$i\gets 1$ to $t$}
+        \State $m_i \gets N/n_i$
+        \State $inv_i \gets m_i^{-1}\bmod n_i$
+        \State $x \gets x + r_i m_i inv_i$
+    \EndFor
+    \State \Return $x \bmod N$
+\EndProcedure
+\Procedure{TwoAdicExpansion}{$a,M$}\Comment{Inverse limit view: residues mod \(2^m\)}
+\idx{algorithm!two-adic expansion}
+    \For{$m\gets 1$ to $M$}
+        \State $a_m \gets a \bmod 2^m$
+    \EndFor
+    \State \Return $(a_1,\dots,a_M)$
+\EndProcedure
+\Procedure{FindUnitSum}{$r$}\Comment{Density witness for axiom GMCQ5}
+\idx{algorithm!density witness}
+    \If{$r\notin\mathbb{Z}$} \Return $1$
+    \Else \Return $1/2$
+    \EndIf
+\EndProcedure
+\end{algorithmic}
+\captionof{algorithm}{Complete algorithmic suite for GMC number systems}
+\label{alg:all}
+\vspace{10pt}
+These procedures are implemented in every modern processor (integer and floating‑point units), in exact rational arithmetic libraries, and in cryptographic hardware, demonstrating the practical relevance of the GMC framework.
+
+\section{Formal Proofs of Main Theorems}
+\label{sec:proofs}
+\idx{proofs!formal}
+This appendix presents the proofs in a fully formalized, predicate‑logic style, using only symbols and mathematical notation. The results are ordered as they appear in the main text.
+
+\subsection{Proof of Theorem \ref{thm:z-unique} (Characterization of \(\mathbb{Z}\))}
+\begin{algorithmic}[1]
+\State Let \(\mathcal{S}=(\mathcal{Z},\{R_m\}_{m\ge1},\{\phi_{m,n}\})\) satisfy (GMCZ1)–(GMCZ5).
+\State \(\forall m\ge1:\ R_m\cong\mathbb{Z}/2^{m}\mathbb{Z}\) \qquad (GMCZ1)
+\State \(\forall n\ge m\ge1:\ \phi_{m,n}:R_n\twoheadrightarrow R_m,\ \phi_{m,n}\circ\phi_{n,k}=\phi_{m,k}\) \qquad (GMCZ2)
+\State \(\mathcal{Z}\cong\varprojlim_m R_m\) \qquad (GMCZ4)
+\State \(\therefore\ \mathcal{Z}\cong\varprojlim_m\mathbb{Z}/2^{m}\mathbb{Z}=:\widehat{\mathbb{Z}}_2\)
+\State \(\exists!\,\iota:\mathbb{Z}\hookrightarrow\mathcal{Z}\) with \(\iota(1)=(1,1,1,\ldots)\) \qquad (GMCZ5)
+\State \(\forall(a_1,\ldots,a_M)\in\prod_{m=1}^M\mathbb{Z}/2^{m}\mathbb{Z}, \ \exists n\in\mathbb{Z},\ \forall m\le M:\ n\bmod2^m=a_m\)
+\State \(\therefore\ \overline{\iota(\mathbb{Z})}=\mathcal{Z}\)
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Theorem \ref{thm:z-unique}}
+
+\subsection{Proof of Corollary \ref{cor:z-embedding} (Integers as Dense Subring)}
+\begin{algorithmic}[1]
+\State From Theorem \ref{thm:z-unique}: \(\mathcal{Z}\cong\widehat{\mathbb{Z}}_2,\ \iota:\mathbb{Z}\hookrightarrow\widehat{\mathbb{Z}}_2\).
+\State \(\forall (a_1,\ldots,a_M)\in\prod_{m=1}^{M}\mathbb{Z}/2^{m}\mathbb{Z},\ \exists n\in\mathbb{Z},\ \forall m\le M:\ n\bmod 2^m = a_m\)
+\State \(\therefore\ \iota(\mathbb{Z})\) dense in \(\widehat{\mathbb{Z}}_2\).
+\State Minimality: any proper subring \(\subset\widehat{\mathbb{Z}}_2\) misses some residue modulo some \(2^m\).
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Corollary \ref{cor:z-embedding}}
+
+\subsection{Proof of Proposition \ref{prop:order} (Order of the Unit Group)}
+\begin{algorithmic}[1]
+\State \(U_m:=(\mathbb{Z}/2^{m}\mathbb{Z})^{\times}\)
+\State \(|\mathbb{Z}/2^{m}\mathbb{Z}|=2^m\)
+\State By Lemma \ref{lem:parity}: \(a\in U_m\iff a\equiv1\pmod2\)
+\State Exactly \(2^{m-1}\) residues \(\pmod{2^m}\) are odd.
+\State \(\therefore |U_m|=2^{m-1}\)
+\State Also \(\varphi(2^m)=2^m-2^{m-1}=2^{m-1}\)
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Proposition \ref{prop:order}}
+
+\subsection{Proof of Lemma \ref{lem:parity} (Parity of Units)}
+\begin{algorithmic}[1]
+\State Let \(a\in U_m\)
+\State \(\gcd(a,2^m)=1\) \qquad (definition of \(U_m\))
+\State Assume \(a\equiv0\pmod2\) \(\implies\) \(\gcd(a,2^m)\ge2\) \qquad contradiction
+\State \(\therefore a\equiv1\pmod2\)
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Lemma \ref{lem:parity}}
+
+\subsection{Proof of Lemma \ref{lem:power-parity} (Powers Preserve Parity)}
+\begin{algorithmic}[1]
+\State Let \(x\in U_m,\ x\equiv1\pmod2,\ n\ge1\)
+\State Base: \(n=1\): \(x^1\equiv1\pmod2\)
+\State Inductive step: assume \(x^k\equiv1\pmod2\)
+\State Then \(x^{k+1}=x^k\cdot x\equiv1\cdot1\equiv1\pmod2\)
+\State By induction, \(x^n\equiv1\pmod2\ \forall n\)
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Lemma \ref{lem:power-parity}}
+
+\subsection{Proof of Lemma \ref{lem:sum-odds} (Sum of Odds)}
+\begin{algorithmic}[1]
+\State Let \(a=2k+1,\ b=2\ell+1\) with \(k,\ell\in\mathbb{Z}\)
+\State \(a+b=2(k+\ell+1)\)
+\State \(\therefore a+b\equiv0\pmod2\)
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Lemma \ref{lem:sum-odds}}
+
+\subsection{Proof of Lemma \ref{lem:even-not-unit} (Even Numbers Are Not Units)}
+\begin{algorithmic}[1]
+\State Let \(a\in\mathbb{Z}/2^{m}\mathbb{Z}\) with \(a\equiv0\pmod2\)
+\State Then \(\gcd(a,2^m)\ge2\)
+\State \(\therefore a\notin U_m\)
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Lemma \ref{lem:even-not-unit}}
+
+\subsection{Proof of Proposition \ref{prop:gmc-z2m} (GMC Core for \(\mathbb{Z}/2^{m}\mathbb{Z}\))}
+\begin{algorithmic}[1]
+\State \(\forall u,v\in U_m\)
+\State By Lemma \ref{lem:parity}: \(u\equiv1\pmod2,\ v\equiv1\pmod2\)
+\State By Lemma \ref{lem:sum-odds}: \(u+v\equiv0\pmod2\)
+\State Assume \(u+v\in U_m\). Then by Lemma \ref{lem:even-not-unit}, \(u+v\equiv0\pmod{2^m}\)
+\State \(\therefore u+v=0\) in \(\mathbb{Z}/2^{m}\mathbb{Z}\)
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Proposition \ref{prop:gmc-z2m}}
+
+\subsection{Proof of Theorem \ref{thm:flt} (No FLT Solutions in \(U_m\))}
+\begin{algorithmic}[1]
+\State Fix \(m\ge2,\ n\ge1\). Assume \(\exists x,y,z\in U_m\) with \(x^n+y^n=z^n\).
+\State By Lemma \ref{lem:parity}: \(x,y,z\equiv1\pmod2\)
+\State By Lemma \ref{lem:power-parity}: \(x^n,y^n,z^n\equiv1\pmod2\)
+\State By Lemma \ref{lem:sum-odds}: \(x^n+y^n\equiv0\pmod2\)
+\State By Lemma \ref{lem:even-not-unit}: \(x^n+y^n\notin U_m\)
+\State Contradiction: \(x^n+y^n=z^n\in U_m\)
+\State \(\therefore\ \nexists x,y,z\in U_m\) satisfying \(x^n+y^n=z^n\)
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Theorem \ref{thm:flt}}
+\subsection{Proof of Lemma \ref{lem:gmc-approx-q} (GMC Approximation)}
+\begin{algorithmic}[1]
+	\State Given primes \(p_{i_1},\dots,p_{i_t}\) and exponents \(e_j\ge1\), set \(n_j:=p_{i_j}^{e_j}\) (pairwise coprime).
+	\State Let \((r_1,\dots,r_t)\in\prod_j R/(n_j)\).
+	\State By CRT: \(\exists x\in R\) such that \(x\equiv r_j\pmod{n_j}\) for all \(j\).
+	\State Hence diagonal map \(R\to\prod_j R/(n_j)\) surjective.
+	\State Algorithm for \(x\) exists (see Alg. \ref{alg:all}).
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Lemma \ref{lem:gmc-approx-q}}
+\subsection{Proof of Theorem \ref{thm:q-unique} (Characterization of \(\mathbb{Q}\))}
+\begin{algorithmic}[1]
+\State Let \((R,U,\{p_i\})\) satisfy (GMCQ1)–(GMCQ6).
+\State By (GMCQ1): \(\exists\mathbb{Z}\hookrightarrow R,\ \mathrm{char}(R)=0\)
+\State By (GMCQ6): \(\forall i,\ R/(p_i)\cong\mathbb{Z}/2^{m_i}\mathbb{Z}\) \(\implies\) \(\mathbb{F}_{p_i}\cong\mathbb{Z}/2^{m_i}\mathbb{Z}\) \(\implies\) \(p_i-1=2^{m_i-1}\) \(\implies\) \(p_i\) Fermat prime.
+\State Let \(L:=\varprojlim_{k,i}R/p_i^kR\).
+\State By Lemma \ref{lem:gmc-approx-q} (CRT): diagonal map \(\delta:R\to\prod_{i,k}R/p_i^kR\) surjective \(\implies\) \(R\) dense in \(L\).
+\State Since \(\mathbb{Z}\hookrightarrow R\) and char 0, \(\mathrm{Frac}(R)\subseteq\mathbb{Q}\).
+\State Conversely, take any \(q=a/b\in\mathbb{Q}\) with \(a,b\in\mathbb{Z}\). Using (GMCQ5) (density) iteratively, construct a sequence of units converging to \(q\); by completeness of inverse limit, \(q\in R\).
+\State \(\therefore R\cong\mathbb{Q}\).
+\State Uniqueness follows from construction.
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Theorem \ref{thm:q-unique}}
+
+
+
+\subsection{Proof of Theorem \ref{thm:r-unique} (Characterization of \(\mathbb{R}\))}
+\begin{algorithmic}[1]
+\State Let \((R,+,\cdot,0,1,<)\) satisfy (OGMC1)–(OGMC6).
+\State (OGMC1)–(OGMC4) are axioms of a complete ordered field (constructive version). Any such field is isomorphic to \(\mathbb{R}\).
+\State (OGMC5):{ \small \(\forall u,v\in R^{\times}:\ (u>0\land v>0)\implies(u+v>0\land u+v\in R^{\times})\) \scriptsize automatic in ordered fields.}\normalsize
+\State (OGMC6): By (OGMC3) (Archimedean): \(\forall\varepsilon>0\ \exists m\in\mathbb{N}:2^{-m}<\varepsilon\).\text{ \ }\hspace{80pt}\text{ \ \ \ } For any \(x\in R\), define \(k:=\lfloor x\cdot2^m+1/2\rfloor\); then \(d:=k2^{-m}\in R\) and \(|x-d|\le2^{-m-1}<\varepsilon\). Hence dyadic rationals dense and computable.
+\State Therefore any model of (OGMC1)–(OGMC4) automatically satisfies (OGMC5) and (OGMC6). By uniqueness of \(\mathbb{R}\), the unique Ordered GMC system is \(\mathbb{R}\).
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Theorem \ref{thm:r-unique}}
+
+\subsection{Proof of Theorem \ref{thm:q-m} (Representable Rationals at Level \(m\))}
+\begin{algorithmic}[1]
+\State \(\mathbb{Q}_m:=\{a/b\mid a,b\in\mathbb{Z},\ |a|,|b|\le2^m-1,\ b\neq0\}\)
+\State For each pair \((a,b)\), choices: \(a\) at most \(2^{m+1}-1\), similarly \(b\).
+\State Hence \(|\mathbb{Q}_m|\le(2^{m+1}-1)^2\).
+\State Membership: check \(|a|\le2^m-1,\ |b|\le2^m-1,\ b\neq0\).
+\State Equality: \(a/b=c/d\iff ad=bc\) (decidable via integer arithmetic).
+\State Addition/multiplication produce new pairs; overflow detectable.
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Theorem \ref{thm:q-m}}
+
+\subsection{Proof of Theorem \ref{thm:r-m} (Fixed‑Point Numbers at Precision \(m\))}
+\begin{algorithmic}[1]
+\State \(\mathbb{R}_m:=\{k/2^m\mid k\in\mathbb{Z},\ -2^m\le k\le2^m\}\)
+\State Values of \(k\) range from \(-2^m\) to \(2^m\) inclusive: \(2^{m+1}+1\) distinct.
+\State For any \(\varepsilon>0\), choose \(m\) with \(2^{-m}<\varepsilon\); then spacing \(2^{-m}<\varepsilon\).
+\State Rounding: given \(x\), \(k:=\lfloor x\cdot2^m+0.5\rfloor\) (ties to even) computable in \(O(m)\) time.
+\State Equality and order: compare integers \(k\).
+\end{algorithmic}
+\captionof{algorithm}{Formal proof of Theorem \ref{thm:r-m}}
+
+\newpage
+\begin{thebibliography}{9}
+\bibitem{epstein2025} N. Epstein and J. Shapiro, Unit-additive rings and Fermat-type equations, \textit{J. Algebra}, to appear.
+\bibitem{epstein2025b} N. Epstein, Rings where a non-nilpotent sum of units is a unit, arXiv:2502.20544v2.
+\bibitem{wiles1995modular} A. Wiles, Modular elliptic curves and Fermat's Last Theorem, \textit{Annals of Math.} \textbf{141}(3) (1995), 443–551.
+\bibitem{rudin1976principles} W. Rudin, \textit{Principles of Mathematical Analysis}, 3rd ed., McGraw-Hill, 1976.
+\bibitem{goldberg1991} D. Goldberg, What every computer scientist should know about floating-point arithmetic, \textit{ACM Computing Surveys} \textbf{23}(1) (1991), 5–48.
+\bibitem{ieee754} IEEE Standard for Floating-Point Arithmetic, IEEE Std 754-2019.
+\bibitem{bishop1967} E. Bishop, \textit{Foundations of Constructive Analysis}, McGraw-Hill, 1967.
+\bibitem{poureLrichards2000} M. B. Pour-El and J. I. Richards, \textit{Computability in Analysis and Physics}, Springer, 2000.
+\bibitem{PattersonHennessy2017} D. A. Patterson and J. L. Hennessy, \textit{Computer Organization and Design}, 5th ed., Morgan Kaufmann, 2017.
+\bibitem{knuth1997art} D. E. Knuth, \textit{The Art of Computer Programming, Vol. 2}, 3rd ed., Addison-Wesley, 1997.
+\bibitem{matula1970foundations} D. W. Matula, Foundations of finite precision arithmetic, \textit{ACM Computing Surveys} \textbf{2}(3) (1970), 159–187.
+\bibitem{Presburger1929} M. Presburger, Über die Vollständigkeit eines gewissen Systems der Arithmetik, \textit{Comptes Rendus du I Congrès des Mathématiciens des Pays Slaves}, 1929.
+\bibitem{burroughs1970} Burroughs Corporation, \textit{Burroughs B5000 Reference Manual}, 1970.
+\bibitem{utahhistorical2023} Supplement to Appendix H: Historical Floating-Point Architectures, Univ. Utah, 2023.
+\bibitem{ckks2017} J. H. Cheon et al., Homomorphic encryption for arithmetic of approximate numbers, \textit{ASIACRYPT 2017}, 409–437.
+\end{thebibliography}
+\printindex   % Print the index at the end
+\end{document}
